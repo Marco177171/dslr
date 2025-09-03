@@ -36,24 +36,23 @@ with open(sys.argv[1], 'r') as dataset:
 			for value in line:
 				try:
 					converted = float(value)
-					features[index]['stats']['count'] += 1
-					features[index]['stats']['mean'] = features[index]['stats']['mean'] + converted / features[index]['stats']['count']
-					features[index]['stats']['std'] = math.sqrt(pow(converted - features[index]['stats']['std'], 2) / features[index]['stats']['count'])
-					if converted < features[index]['stats']['min']:
-						features[index]['stats']['min'] = converted
-					features[index]['stats']['25%'] = (features[index]['stats']['max'] - features[index]['stats']['min']) / 100 * 25 + features[index]['stats']['min']
-					features[index]['stats']['50%'] = (features[index]['stats']['max'] - features[index]['stats']['min']) / 100 * 50 + features[index]['stats']['min']
-					features[index]['stats']['75%'] = (features[index]['stats']['max'] - features[index]['stats']['min']) / 100 * 75 + features[index]['stats']['min']
-					if converted > features[index]['stats']['max']:
-						features[index]['stats']['max'] = converted
 				except:
 					index += 1
 					continue
+				features[index]['stats']['count'] += 1
+				features[index]['stats']['mean'] = features[index]['stats']['mean'] + converted / features[index]['stats']['count']
+				features[index]['stats']['std'] = math.sqrt(pow(converted - features[index]['stats']['std'], 2) / features[index]['stats']['count'])
+				if converted < features[index]['stats']['min']:
+					features[index]['stats']['min'] = converted
+				features[index]['stats']['25%'] = (features[index]['stats']['max'] - features[index]['stats']['min']) / 100 * 25 + features[index]['stats']['min']
+				features[index]['stats']['50%'] = (features[index]['stats']['max'] - features[index]['stats']['min']) / 100 * 50 + features[index]['stats']['min']
+				features[index]['stats']['75%'] = (features[index]['stats']['max'] - features[index]['stats']['min']) / 100 * 75 + features[index]['stats']['min']
+				if converted > features[index]['stats']['max']:
+					features[index]['stats']['max'] = converted
 				index += 1
 
 for i in features:
-	print(i['name'], end='\t')
-print('\n')
+	print(i['name'], end=' ')
 
 print('\nCount: ', end='\t')
 for i in features:
