@@ -1,4 +1,4 @@
-import sys, csv, copy, math, pprint
+import sys, csv, copy, math
 
 statistics = {
 	'count': 0,
@@ -13,14 +13,12 @@ statistics = {
 
 feature = {
 	'name' : None,
-	'stats' : None
+	'stats' : None,
 }
 
 with open(sys.argv[1], 'r') as dataset:
 	readable = csv.reader(dataset)
-	
 	features_set = False
-
 	for line in readable:
 		if not features_set:
 			features = []
@@ -52,38 +50,79 @@ with open(sys.argv[1], 'r') as dataset:
 				index += 1
 
 for i in features:
-	print(i['name'], end=' ')
+	if (i['stats']['count'] != 0):
+		print(i['name'], len(i['name']), end='\t|')
 
-print('\nCount: ', end='\t')
+print('\nCount: ', end='\t|')
 for i in features:
-	print(round(i['stats']['count'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['count'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\nMean: ', end='\t')
+print('\nMean: ', end='\t|')
 for i in features:
-	print(round(i['stats']['mean'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['mean'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\nSTD: ', end='\t')
+print('\nSTD: ', end='\t|')
 for i in features:
-	print(round(i['stats']['std'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['std'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\nMin: ', end='\t')
+print('\nMin: ', end='\t|')
 for i in features:
-	print(round(i['stats']['min'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['min'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\n25%: ', end='\t')
+print('\n25%: ', end='\t|')
 for i in features:
-	print(round(i['stats']['25%'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['25%'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\n50%: ', end='\t')
+print('\n50%: ', end='\t|')
 for i in features:
-	print(round(i['stats']['50%'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['50%'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\n75%: ', end='\t')
+print('\n75%: ', end='\t|')
 for i in features:
-	print(round(i['stats']['75%'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['75%'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
-print('\nMax: ', end='\t')
+print('\nMax: ', end='\t|')
 for i in features:
-	print(round(i['stats']['max'], 2), end='\t')
+	try:
+		cipher = float(i['stats']['max'])
+		if (cipher != 0):
+			print(round(cipher, 2), end='\t|')
+	except:
+		continue
 
 print('\n')
