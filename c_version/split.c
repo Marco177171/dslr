@@ -10,8 +10,6 @@ char **split(char *s, char limit_char) {
 		i++;
 	}
 
-	// printf("found %d commas in : %s\n", limit_count, s);
-
 	r = malloc(sizeof(char*) * limit_count + 1);
 	r[limit_count] = NULL;
 	if (!r) {
@@ -26,10 +24,11 @@ char **split(char *s, char limit_char) {
 		if (s[i] == limit_char) {
 			r[r_index] = substring(s, start, i);
 			r_index++;
-			i++;
-			start = i;
+			start = i + 1;
 		}
 		i++;
 	}
 	return r;
 }
+
+// a s d , , ,

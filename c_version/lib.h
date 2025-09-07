@@ -16,6 +16,13 @@ typedef struct s_statistics {
 	float max;
 } t_statistics;
 
+// memory_managers.c
+void free_array(char** list);
+void free_matrix(char*** matrix);
+// pinters.c
+void print_array_vertically(char **array);
+void print_matrix_vertically(char ***matrix);
+// utilities
 char**  split(char *string, char delimiter);
 char*   substring(char *string, int start_index, int last_index);
 
