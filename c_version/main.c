@@ -18,14 +18,13 @@ int main(int argc, char **argv) {
 	}
 
 	char buffer[1024];
-	int stopper = 0, c = 0;
+	int c = 0;
 
 	while (fgets(buffer, 1024, csv_file))
 		c++;
 
 	printf("%d lines counted in csv file\n\n", c);
 
-	char* title_string;
 	char** rows_array = malloc(sizeof(char*) * (c + 1));
 	rows_array[c] = NULL;
 
@@ -40,16 +39,16 @@ int main(int argc, char **argv) {
 	char ***matrix = malloc(sizeof(char**) * (i + 1));
 	matrix[i] = NULL;
 	i = 0;
-	int j = 0;
 	while (rows_array[i]) {
 		matrix[i] = split(rows_array[i], ',');
 		i++;
 	}
 
-	print_matrix_vertically(matrix);
+	matrix_along_col(matrix, 3);
 
 	free_array(rows_array);
 	free_matrix(matrix);
+
 	fclose(csv_file);
 	return 0;
 }

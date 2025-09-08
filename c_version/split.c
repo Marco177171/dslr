@@ -30,5 +30,3 @@ char **split(char *s, char limit_char) {
 	}
 	return r;
 }
-
-// a s d , , ,
