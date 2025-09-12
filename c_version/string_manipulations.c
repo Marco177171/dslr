@@ -1,8 +1,6 @@
 #include "lib.h"
 
 char* substring(char *string, int begin, int end) {
-	
-	// printf("SUBSTRING INTRO - %sfirst = %d | last = %d\n", string, first_index, last_index);
 	if (begin > end) {
 		perror("Last index can't be smaller than the first one\n");
 		exit(1);

@@ -8,14 +8,21 @@
 #include <string.h>
 
 typedef struct s_statistics {
-	float count;
-	float std;
-	float min;
-	float twentyfive;
-	float fifty;
-	float seventyfive;
-	float max;
+	int count;
+	double std;
+	double mean;
+	double min;
+	double twentyfive;
+	double fifty;
+	double seventyfive;
+	double max;
 } t_statistics;
+
+typedef struct s_feature {
+	char 				*name;
+	t_statistics		stats;
+	struct s_feature 	*next;
+}	t_feature;
 
 // memory_managers.c
 void free_array(char** list);
@@ -23,13 +30,20 @@ void free_matrix(char*** matrix);
 // pinters.c
 void print_array_vertically(char **array);
 void print_matrix_vertically(char ***matrix);
+void print_matrix_column_vertically(char ***matrix, int col_index);
+void print_matrix_row(char **matrix);
 // utilities
 char** split(char *string, char delimiter);
 char* substring(char *string, int start_index, int last_index);
 // statistics
-int array_len(float array[]);
-float array_mean(float array[]);
-float standard_deviation(float array[]);
-void matrix_along_col(char ***matrix, int row_index);
-
+int array_len(double *array);
+double array_mean(char ***matrix, int col);
+double standard_deviation(char ***matrix, int col);
+double find_max(char ***matrix, int col);
+double find_min(char ***matrix, int col);
+t_feature* get_statistics(char ***matrix);
+// check
+int is_valid(char *s);
+int is_number(char *s);
+int is_valid_column(char ***matrix, int col);
 #endif

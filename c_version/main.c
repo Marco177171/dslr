@@ -33,14 +33,18 @@ int main(int argc, char **argv) {
 		c++;
 	}
 
-	for (int i = 0; matrix[i]; i++) {
-		for (int j = 0; matrix[i][j]; j++) {
-			printf("%s,", matrix[i][j]);
-		}
-		printf("\n");
+	t_feature *features = get_statistics(matrix);
+	while (features) {
+		printf("%s\n", features->name);
+		printf("count: %d\n", features->stats.count);
+		printf("mean: %f\n", features->stats.mean);
+		printf("std: %f\n", features->stats.std);
+		printf("min: %f\n", features->stats.min);
+		printf("max: %f\n", features->stats.max);
+		
+		features = features->next;
 	}
-
-	// matrix_along_col(matrix, 3);
+	
 	free_matrix(matrix);
 
 	fclose(csv_file);
