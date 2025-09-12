@@ -20,9 +20,8 @@ int main(int argc, char **argv) {
 	char buffer[2048];
 	int c = 0;
 
-	while (fgets(buffer, 2048, csv_file)) {
+	while (fgets(buffer, 2048, csv_file))
 		c++;
-	}
 
 	printf("%d lines counted in csv file\n\n", c);
 	rewind(csv_file);
