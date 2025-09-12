@@ -17,36 +17,31 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	char buffer[1024];
+	char buffer[2048];
 	int c = 0;
 
-	while (fgets(buffer, 1024, csv_file))
+	while (fgets(buffer, 2048, csv_file)) {
 		c++;
+	}
 
 	printf("%d lines counted in csv file\n\n", c);
-
-	char** rows_array = malloc(sizeof(char*) * (c + 1));
-	rows_array[c] = NULL;
-
 	rewind(csv_file);
-	int i = 0;
-	while (fgets(buffer, 1024, csv_file)) {
-		rows_array[i] = strdup(buffer);
-		memset(buffer, 0, 1024);
-		i++;
+	char ***matrix = malloc(sizeof(char**) * (c + 1));
+	matrix[c] = NULL;
+	c = 0;
+	while (fgets(buffer, 2048, csv_file)) {
+		matrix[c] = split(buffer, ',');
+		c++;
 	}
 
-	char ***matrix = malloc(sizeof(char**) * (i + 1));
-	matrix[i] = NULL;
-	i = 0;
-	while (rows_array[i]) {
-		matrix[i] = split(rows_array[i], ',');
-		i++;
+	for (int i = 0; matrix[i]; i++) {
+		for (int j = 0; matrix[i][j]; j++) {
+			printf("%s,", matrix[i][j]);
+		}
+		printf("\n");
 	}
 
-	matrix_along_col(matrix, 3);
-
-	free_array(rows_array);
+	// matrix_along_col(matrix, 3);
 	free_matrix(matrix);
 
 	fclose(csv_file);

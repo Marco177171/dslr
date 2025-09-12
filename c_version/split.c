@@ -9,14 +9,14 @@ char **split(char *s, char limit_char) {
 			limit_count++;
 		i++;
 	}
-
+	limit_count++;
 	r = malloc(sizeof(char*) * limit_count + 1);
 	r[limit_count] = NULL;
 	if (!r) {
 		perror("Malloc error for results list\n");
 		exit(1);
 	}
-
+	
 	int start = 0;
 	int r_index = 0;
 	i = 0;
@@ -28,5 +28,6 @@ char **split(char *s, char limit_char) {
 		}
 		i++;
 	}
+	r[r_index] = substring(s, start, i - 1);
 	return r;
 }
