@@ -11,7 +11,6 @@ int main(int argc, char **argv) {
 	
 	if (csv_file)
 		printf("CSV File open\n\n");
-
 	else {
 		perror("File not open. Quitting");
 		exit(1);
