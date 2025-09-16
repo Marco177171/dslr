@@ -2,8 +2,8 @@ NAME = histogram
 SRCS = *.c
 FLAGS = -Werror -Wextra -Wall
 
-$(NAME): 
-	gcc main.c -std=c99 -lncurses -o ${NAME}
+$(NAME):
+		gcc $(FLAGS) $(SRCS) -o $(NAME) -lncurses -lm
 
 clean:
 		rm -rf $(NAME)

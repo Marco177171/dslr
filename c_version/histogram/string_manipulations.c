@@ -1,7 +1,6 @@
-#include "dslr.h"
+#include "histogram.h"
 
 char* substring(char *string, int begin, int end) {
-	printf("substring %s\n", string);
 	if (begin > end) {
 		perror("Last index can't be smaller than the first one\n");
 		exit(1);
@@ -17,6 +16,5 @@ char* substring(char *string, int begin, int end) {
 		begin++;
 		i++;
 	}
-	printf("substring return\n");
 	return r;
 }
