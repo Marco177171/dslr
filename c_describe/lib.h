@@ -30,6 +30,7 @@ typedef enum {
 }	e_type;
 
 typedef struct s_data_frame {
+	int		valid;
 	e_type	type;
 	union {
 		double d;

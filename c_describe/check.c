@@ -14,7 +14,6 @@ int is_number(char *s)
 			if (discriminant > 1) return 0;
 			continue;
 		} else {
-			printf("is_number: %s\n", s);
 			return 0;
 		}
 	}
