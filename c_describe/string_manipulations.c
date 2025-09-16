@@ -16,6 +16,5 @@ char* substring(char *string, int begin, int end) {
 		begin++;
 		i++;
 	}
-	printf("substring return\n");
 	return r;
 }
