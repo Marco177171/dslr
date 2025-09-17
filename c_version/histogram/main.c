@@ -43,10 +43,10 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	
 	initscr(); // open visualization in terminal
 	start_color(); // set color capabilities on
-	init_pair(1, COLOR_BLACK, COLOR_YELLOW);
-	init_pair(2, COLOR_BLACK, COLOR_RED);
+	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(2, COLOR_RED, COLOR_BLACK);
 	init_pair(3, COLOR_BLACK, COLOR_BLACK);
-	init_pair(4, COLOR_BLACK, COLOR_GREEN);
+	init_pair(4, COLOR_GREEN, COLOR_BLACK);
 	addstr("HISTOGRAM\n");
 	// printw("%s\n", matrix[0][1]);
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 	
 	if (argc != 3) {
 		perror("Wrong amount of arguments. Usage: ./histogram *csv_file* *column_index*\n");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	FILE* csv_file = fopen(argv[1], "r");
