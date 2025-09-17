@@ -7,6 +7,19 @@
 // 	'SLYTHERIN': 'GREEN',
 // }
 
+int house_offset(char *hogwarts_house) {
+	if (!strcmp(hogwarts_house, "Gryffindor"))
+		return (0);
+	else if (!strcmp(hogwarts_house, "Hufflepuff"))
+		return (1);
+	else if (!strcmp(hogwarts_house, "Ravenclaw"))
+		return (2);
+	else if (!strcmp(hogwarts_house, "Slytherin"))
+		return (3);
+	else
+		return(COLOR_WHITE);
+}
+
 int define_color(char *hogwarts_house) {
 	if (!strcmp(hogwarts_house, "Gryffindor"))
 		return (1);
@@ -25,17 +38,17 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	double max = find_max(matrix, col);
 
 	int height = (int)(max - min);
-	int top_lines = 2;
+	int top_lines = 1;
 
 	
 	initscr(); // open visualization in terminal
 	start_color(); // set color capabilities on
-	init_pair(1, COLOR_WHITE, COLOR_YELLOW);
-	init_pair(2, COLOR_WHITE, COLOR_RED);
-	init_pair(3, COLOR_WHITE, COLOR_WHITE);
-	init_pair(4, COLOR_WHITE, COLOR_GREEN);
+	init_pair(1, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(2, COLOR_BLACK, COLOR_RED);
+	init_pair(3, COLOR_BLACK, COLOR_BLACK);
+	init_pair(4, COLOR_BLACK, COLOR_GREEN);
 	addstr("HISTOGRAM\n");
-	printw("%s\n", matrix[0][1]);
+	// printw("%s\n", matrix[0][1]);
 
 	int i = 0, j = 0, value = 0, counter = 0, color_number = 0;
 	while (i < height) {
@@ -48,7 +61,7 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 				color_number = define_color(matrix[j][1]);
 				attron(COLOR_PAIR(color_number));
 				mvhline(i + top_lines, counter, '|', value);
-				// attroff(COLOR_PAIR(color_number));
+				attroff(COLOR_PAIR(color_number));
 				counter++;
 			}
 			j++;
