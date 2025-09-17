@@ -12,7 +12,7 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	double max = find_max(matrix, col);
 
 	int height = (int)(max - min);
-	int top_lines = 3;
+	int top_lines = 2;
 
 	// double *scores = malloc(sizeof(double*) * max - min);
 
