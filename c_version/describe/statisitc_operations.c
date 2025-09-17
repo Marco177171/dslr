@@ -92,13 +92,28 @@ void sort_column(t_data_frame ***df, int col) {
 	}
 }
 
+int compare(const void *a, const void *b) {
+	return (*(double *)a - *(double *)b);
+}
+
 void percentiles(t_data_frame ***df, int col, double *l, double *m, double *h)
 {
-	sort_column(df, col);
-	printf("%f %f %f\n",*l, *m, *h);
-	for (int i = 1; df[i]; i++) {
-		printf("%f\n", df[i][col]->d);
+	int i = 0;
+	while (df[i]) i++;
+	double *arr = malloc(sizeof(double) * (i - 1));
+
+	for (int j = 1; df[j]; j++) {
+		if (df[j][col]->valid) {
+			arr[j] = df[j][col]->d;
+		}
 	}
+	// sort_column(df, col);
+	qsort(arr, i - 1, sizeof(double), compare);
+	printf("%f %f %f\n",*l, *m, *h);
+	for (int j = 0; j < i - 1; j++) {
+		printf("%f\n", arr[j]);
+	}
+	free(arr);
 }
 
 t_feature* get_statistics(t_data_frame ***df)
