@@ -14,8 +14,6 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	int height = (int)(max - min);
 	int top_lines = 2;
 
-	// double *scores = malloc(sizeof(double*) * max - min);
-
 	initscr(); // open visualization in terminal
 	addstr("HISTOGRAM\n");
 	printw("%s\n", matrix[0][1]);
@@ -28,7 +26,7 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 			value = atoi(matrix[j][col] + abs((int)min));
 			// add char at the end of line at 'i'
 			if (value == i) {
-				mvhline(i + top_lines, counter, '/', value);
+				mvhline(i + top_lines, counter, '|', value);
 				counter++;
 			}
 			j++;
