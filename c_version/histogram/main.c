@@ -3,22 +3,24 @@
 void visualize_data(char ***matrix, int col) {
 	double min = find_min(matrix, col);
 	double max = find_max(matrix, col);
-	
-	printf("MIN : %f | MAX : %f\n", min, max);
-	initscr();
+
+	// double *scores = malloc(sizeof(double*) * max - min);
+
+	initscr(); // open visualization in terminal
 	addstr("HISTOGRAM\n");
-	addstr("press any key to exit...\n");
-
-	refresh();
-	getch();
-	endwin();
-	clear();
-
+	addstr("Press any key to exit...\n");
+	refresh(); // update window content
+	getch(); // read a char from keyboard
+	endwin(); // close windows
+	clear(); // clear screen, back to terminal
+	
 	int i = 0;
 	while (matrix[i]) {
-		printf("%s\n", matrix[i][col]);
+		printf("%s\t%s\n", matrix[i][1], matrix[i][col]);
+		hline('.', 42);
 		i++;
 	}
+	printf("MIN : %f | MAX : %f\n", min, max);
 }
 
 int main(int argc, char **argv) {
