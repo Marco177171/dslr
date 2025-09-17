@@ -38,7 +38,7 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	double max = find_max(matrix, col);
 
 	int height = (int)(max - min);
-	int top_lines = 1;
+	int top_lines = 2;
 
 	
 	initscr(); // open visualization in terminal
@@ -47,8 +47,9 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	init_pair(2, COLOR_RED, COLOR_BLACK);
 	init_pair(3, COLOR_BLACK, COLOR_BLACK);
 	init_pair(4, COLOR_GREEN, COLOR_BLACK);
-	addstr("HISTOGRAM\n");
-	// printw("%s\n", matrix[0][1]);
+
+	addstr("Histogram for:\n");
+	printw("%s\n", matrix[0][col]);
 
 	int i = 0, j = 0, value = 0, counter = 0, color_number = 0;
 	while (i < height) {
