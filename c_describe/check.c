@@ -20,11 +20,11 @@ int is_number(char *s)
 	return s != NULL;
 }
 
-int is_valid_column(char ***matrix, int col)
+int is_valid_column(t_data_frame ***df, int col)
 {
-	for (int i = 1; matrix[i]; i++) {
-		if (matrix[i][col][0] == 0) continue;
-		if (!is_number(matrix[i][col])) return 0;
+	for (int i = 1; df[i]; i++) {
+		if (df[i][col]->valid && df[i][col]->type == STRING)
+			return 0;
 	}
 	return 1;
 }

@@ -26,40 +26,36 @@ int main(int argc, char **argv) {
 	rewind(csv_file);
 	t_data_frame ***df = malloc(sizeof(t_data_frame**) * (c + 1));
 	df[c] = NULL;
-	char ***matrix = malloc(sizeof(char**) * (c + 1));
-	matrix[c] = NULL;
 	c = 0;
 	while (fgets(buffer, 2048, csv_file)) {
-		// matrix[c] = split(buffer, ',');
 		df[c] = load_df(buffer, ',');
 		c++;
 	}
-	printf("print\n");
 	c = 0;
-	while (df[c]) {
-		for (int i = 0; df[c][i]; i++) {
-			if (df[c][i]->type == STRING) {
-				printf("%s|", df[c][i]->s);
-			} else {
-				printf("%f|", df[c][i]->d);
-			}
-		}
-		printf("\n");
-		c++;
-	}
-
-	// t_feature *features = get_statistics(matrix);
-	// while (features) {
-	// 	printf("---------------\n");
-	// 	printf("%s\n", features->name);
-	// 	printf("count: %d\n", features->stats.count);
-	// 	printf("mean: %f\n", features->stats.mean);
-	// 	printf("std: %f\n", features->stats.std);
-	// 	printf("min: %f\n", features->stats.min);
-	// 	printf("max: %f\n", features->stats.max);
-		
-	// 	features = features->next;
+	// while (df[c]) {
+	// 	for (int i = 0; df[c][i]; i++) {
+	// 		if (df[c][i]->type == STRING) {
+	// 			printf("%s|", df[c][i]->s);
+	// 		} else {
+	// 			printf("%f|", df[c][i]->d);
+	// 		}
+	// 	}
+	// 	printf("\n");
+	// 	c++;
 	// }
+
+	t_feature *features = get_statistics(df);
+	while (features) {
+		printf("\n---------------\n");
+		printf("%s\n", features->name);
+		printf("count: %d\n", features->stats.count);
+		printf("mean: %f\n", features->stats.mean);
+		printf("std: %f\n", features->stats.std);
+		printf("min: %f\n", features->stats.min);
+		printf("max: %f\n", features->stats.max);
+		
+		features = features->next;
+	}
 	
 	// free_matrix(matrix);
 

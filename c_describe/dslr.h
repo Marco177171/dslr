@@ -42,23 +42,23 @@ typedef struct s_data_frame {
 void free_array(char** list);
 void free_matrix(char*** matrix);
 // pinters.c
-void print_array_vertically(char **array);
-void print_matrix_vertically(char ***matrix);
-void print_matrix_column_vertically(char ***matrix, int col_index);
-void print_matrix_row(char **matrix);
+void print_matrix_vertically(t_data_frame ***df);
+void print_matrix_column_vertically(t_data_frame ***df, int col_index);
+void print_matrix_row(t_data_frame **df);
 // utilities
 char** split(char *string, char delimiter);
 t_data_frame **load_df(char *s, char limit_char);
 char* substring(char *string, int start_index, int last_index);
 // statistics
 int array_len(double *array);
-double array_mean(char ***matrix, int col);
-double standard_deviation(char ***matrix, int col);
-double find_max(char ***matrix, int col);
-double find_min(char ***matrix, int col);
-t_feature* get_statistics(char ***matrix);
+double array_mean(t_data_frame ***df, int col);
+double standard_deviation(t_data_frame ***df, int col);
+double find_max(t_data_frame ***df, int col);
+double find_min(t_data_frame ***df, int col);
+void sort_column(t_data_frame ***df, int col);
+t_feature* get_statistics(t_data_frame ***df);
 // check
 int is_valid(char *s);
 int is_number(char *s);
-int is_valid_column(char ***matrix, int col);
+int is_valid_column(t_data_frame ***df, int col);
 #endif

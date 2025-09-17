@@ -62,8 +62,8 @@ t_data_frame **load_df(char *s, char limit_char) {
 					r[index]->type = DOUBLE;
 					r[index]->d = atof(&s[start]);
 				} else {
-					r[index]->s = substring(s, start, i);
 					r[index]->type = STRING;
+					r[index]->s = substring(s, start, i);
 				}
 			}
 			index++;
@@ -71,14 +71,19 @@ t_data_frame **load_df(char *s, char limit_char) {
 		}
 		i++;
 	}
-	// s[i] = 0;
-	// if (is_number(&s[start])) {
-	// 	r[index]->type = DOUBLE;
-	// 	r[index]->d = atof(&s[start]);
-	// } else {
-	// 	r[index]->type = STRING;
-	// 	r[index]->s = substring(s, start, i - 1);
-	// }
+
+	if (s[i -1] == '\n') s[i - 1] = 0;
+	r[index] = malloc(sizeof(t_data_frame));
+	if (is_valid(&s[start])) {
+		r[index]->valid = 1;
+		if (is_number(&s[start])) {
+			r[index]->type = DOUBLE;
+			r[index]->d = atof(&s[start]);
+		} else {
+			r[index]->type = STRING;
+			r[index]->s = substring(s, start, i);
+		}
+	}
 	// printf("before return\n");
 	return r;
 }

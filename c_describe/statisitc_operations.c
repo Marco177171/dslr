@@ -7,12 +7,11 @@ int array_len(double *array) {
 	return c;
 }
 
-int count(char ***matrix, int col)
+int count(t_data_frame ***df, int col)
 {
 	int i = 0, sum = 0;
-	while (matrix[i]) {
-		if (is_valid(matrix[i][col])
-			&& is_number(matrix[i][col])) {
+	while (df[i]) {
+		if (df[i][col]->valid && df[i][col]->type == DOUBLE) {
 			sum++;
 		}
 		i++;
@@ -20,13 +19,13 @@ int count(char ***matrix, int col)
 	return sum;
 }
 
-double array_mean(char ***matrix, int col)
+double array_mean(t_data_frame ***df, int col)
 {
-	int i = 0, sum = 0, count = 0;
-	while (matrix[i]) {
-		if (is_valid(matrix[i][col])
-			&& is_number(matrix[i][col])) {
-			sum += atof(matrix[i][col]);
+	int i = 0;
+	double sum = 0, count = 0;
+	while (df[i]) {
+		if (df[i][col]->valid && df[i][col]->type == DOUBLE) {
+			sum += df[i][col]->d;
 			count++;
 		}
 		i++;
@@ -34,16 +33,14 @@ double array_mean(char ***matrix, int col)
 	return sum / count;
 }
 
-double standard_deviation(char ***matrix, int col)
+double standard_deviation(t_data_frame ***df, int col)
 {
 	int i = 0, count = 0;
-	double mean = array_mean(matrix, col);
-	// printf("after array mean\n");
+	double mean = array_mean(df, col);
 	double sums_squared = 0;
-	while (matrix[i]) {
-		if (is_valid(matrix[i][col])
-			&& is_number(matrix[i][col])) {
-			double d = atof(matrix[i][col]);
+	while (df[i]) {
+		if (df[i][col]->valid && df[i][col]->type == DOUBLE) {
+			double d = df[i][col]->d;
 			sums_squared += pow(d - mean, 2);
 			count++;
 		}
@@ -52,61 +49,71 @@ double standard_deviation(char ***matrix, int col)
 	return sqrt(sums_squared / (count + 1));
 }
 
-double find_max(char ***matrix, int col) {
+double find_max(t_data_frame ***df, int col) {
 	double max = 0, current = 0;
-	for (int i = 0; matrix[i]; i++) {
-		current = atof(matrix[i][col]);
-		if (current > max)
-			max = current;
+	(*((unsigned long*)&max))= ~(1LL<<52);
+	for (int i = 1; df[i]; i++) {
+		if (df[i][col]->valid && df[i][col]->type == DOUBLE) {
+			current = df[i][col]->d;
+			if (current > max) {
+				max = current;
+			}
+		}
 	}
 	return max;
 }
 
-double find_min(char ***matrix, int col) {
+double find_min(t_data_frame ***df, int col) {
 	double min = 0, current = 0;
-	for (int i = 0; matrix[i]; i++) {
-		current = atof(matrix[i][col]);
-		if (current < min)
-			min = current;
+	for (int i = 1; df[i]; i++) {
+		if (df[i][col]->valid && df[i][col]->type == DOUBLE) {
+			current = df[i][col]->d;
+			if (current < min)
+				min = current;
+		}
 	}
 	return min;
 }
 
-// double *sort_column_values(char ***matrix, int col) {
-// 	double *sorted;
+void sort_column(t_data_frame ***df, int col) {
+	// funziona ma é lento in culo
+	t_data_frame *temp;
+	for (int i = 1; df[i]; i++) {
+		if (df[i][col] && df[i][col]->valid && df[i][col]->type == DOUBLE) {
+			if (df[i + 1] && df[i + 1][col] && df[i + 1][col]->valid && df[i + 1][col]->type == DOUBLE) {
+				if (df[i][col]->d > df[i + 1][col]->d) {
+					temp = df[i][col];
+					df[i][col] = df[i + 1][col];
+					df[i + 1][col] = temp;
+					i = 1;
+				}
+			}
+		}
+	}
+}
 
-// 	for (int i = 0; matrix[i][col]; i++) {
-// 		if (is_valid(matrix[i][col])
-// 			&& is_number(matrix[i][col])) {
-// 			double d = atof(matrix[i][col]);
-// 			double d2 = atof(matrix[i][col + 1]);
-// 			if (d > d2) {
-// 				matrix[i][col] = matrix[i][col + 1];
-// 				i = 0;
-// 			}
-// 		}
-// 	}
-	
-// 	return sorted;
-// }
+void percentiles(t_data_frame ***df, int col, double *l, double *m, double *h)
+{
+	sort_column(df, col);
+	printf("%f %f %f\n",*l, *m, *h);
+	for (int i = 1; df[i]; i++) {
+		printf("%f\n", df[i][col]->d);
+	}
+}
 
-// void percentiles(char ***matrix, int col, int *l, int *m, int *h)
-// {
-	
-// }
-
-t_feature* get_statistics(char ***matrix)
+t_feature* get_statistics(t_data_frame ***df)
 {
 	t_feature *results = NULL;
-	for (int i = 0; matrix[1][i]; i++) {
-		if (is_valid_column(matrix, i)) {
+	for (int i = 0; df[1][i]; i++) {
+		if (is_valid_column(df, i)) {
 			t_feature *new = malloc(sizeof(t_feature));
-			new->name = strdup(matrix[0][i]);
-			new->stats.count = count(matrix, i);
-			new->stats.std = standard_deviation(matrix, i);
-			new->stats.mean = array_mean(matrix, i);
-			new->stats.max = find_max(matrix, i);
-			new->stats.min = find_min(matrix, i);
+			new->name = strdup(df[0][i]->s);
+			new->stats.count = count(df, i);
+			new->stats.std = standard_deviation(df, i);
+			new->stats.mean = array_mean(df, i);
+			new->stats.max = find_max(df, i);
+			new->stats.min = find_min(df, i);
+			percentiles(df, i, &new->stats.twentyfive, &new->stats.fifty, &new->stats.seventyfive);
 			new->next = NULL;
 			if (!results) {
 				results = new;
