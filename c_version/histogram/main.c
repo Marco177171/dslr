@@ -1,11 +1,24 @@
 #include "histogram.h"
 
-// #define COLORS = {
+// COLORS = {
 // 	'GRYFFINDOR': 'YELLOW',
 // 	'HUFFLEPUFF': 'RED',
 // 	'RAVENCLAW': 'GRAY',
 // 	'SLYTHERIN': 'GREEN',
 // }
+
+int define_color(char *hogwarts_house) {
+	if (!strcmp(hogwarts_house, "Gryffindor"))
+		return (1);
+	else if (!strcmp(hogwarts_house, "Hufflepuff"))
+		return (2);
+	else if (!strcmp(hogwarts_house, "Ravenclaw"))
+		return (3);
+	else if (!strcmp(hogwarts_house, "Slytherin"))
+		return (4);
+	else
+		return(COLOR_WHITE);
+}
 
 void visualize_data(char ***matrix, int col, int matrix_len) {
 	double min = find_min(matrix, col);
@@ -14,28 +27,34 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	int height = (int)(max - min);
 	int top_lines = 2;
 
+	
 	initscr(); // open visualization in terminal
+	start_color(); // set color capabilities on
+	init_pair(1, COLOR_WHITE, COLOR_YELLOW);
+	init_pair(2, COLOR_WHITE, COLOR_RED);
+	init_pair(3, COLOR_WHITE, COLOR_WHITE);
+	init_pair(4, COLOR_WHITE, COLOR_GREEN);
 	addstr("HISTOGRAM\n");
 	printw("%s\n", matrix[0][1]);
 
-	int i = 0, j = 0, value = 0, counter = 0;
+	int i = 0, j = 0, value = 0, counter = 0, color_number = 0;
 	while (i < height) {
 		j = 0;
 		counter = 0;
 		while (j < matrix_len) {
-			value = atoi(matrix[j][col] + abs((int)min));
+			value = atoi(matrix[j][col]) + abs((int)min);
 			// add char at the end of line at 'i'
 			if (value == i) {
+				color_number = define_color(matrix[j][1]);
+				attron(COLOR_PAIR(color_number));
 				mvhline(i + top_lines, counter, '|', value);
+				// attroff(COLOR_PAIR(color_number));
 				counter++;
 			}
 			j++;
 		}
 		i++;
 	}
-	// hline('.', 42);
-	// hline('.', 36);
-	// hline('.', 20);
 	refresh(); // update window content
 	getch(); // read a char from keyboard
 	endwin(); // close windows
