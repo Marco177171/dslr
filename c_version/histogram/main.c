@@ -1,25 +1,48 @@
 #include "histogram.h"
 
-void visualize_data(char ***matrix, int col) {
+// #define COLORS = {
+// 	'GRYFFINDOR': 'YELLOW',
+// 	'HUFFLEPUFF': 'RED',
+// 	'RAVENCLAW': 'GRAY',
+// 	'SLYTHERIN': 'GREEN',
+// }
+
+void visualize_data(char ***matrix, int col, int matrix_len) {
 	double min = find_min(matrix, col);
 	double max = find_max(matrix, col);
+
+	int height = (int)(max - min);
+	int top_lines = 3;
 
 	// double *scores = malloc(sizeof(double*) * max - min);
 
 	initscr(); // open visualization in terminal
 	addstr("HISTOGRAM\n");
-	addstr("Press any key to exit...\n");
+	printw("%s\n", matrix[0][1]);
+
+	int i = 0, j = 0, value = 0, counter = 0;
+	while (i < height) {
+		j = 0;
+		counter = 0;
+		while (j < matrix_len) {
+			value = atoi(matrix[j][col] + abs((int)min));
+			// add char at the end of line at 'i'
+			if (value == i) {
+				mvhline(i + top_lines, counter, '/', value);
+				counter++;
+			}
+			j++;
+		}
+		i++;
+	}
+	// hline('.', 42);
+	// hline('.', 36);
+	// hline('.', 20);
 	refresh(); // update window content
 	getch(); // read a char from keyboard
 	endwin(); // close windows
 	clear(); // clear screen, back to terminal
 	
-	int i = 0;
-	while (matrix[i]) {
-		printf("%s\t%s\n", matrix[i][1], matrix[i][col]);
-		hline('.', 42);
-		i++;
-	}
 	printf("MIN : %f | MAX : %f\n", min, max);
 }
 
@@ -56,7 +79,7 @@ int main(int argc, char **argv) {
 		c++;
 	}
 	
-	visualize_data(matrix, atoi(argv[2]));
+	visualize_data(matrix, atoi(argv[2]), c);
 	free_matrix(matrix);
 
 	fclose(csv_file);
