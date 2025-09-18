@@ -47,10 +47,11 @@ void visualize_data(t_data_frame*** df, int col) {
 	printw("%s\n", df[0][col]->s);
 
 	int i = 0, j = 0, value = 0, counter = 0, color_number = 0;
-    int len = 0;
+    int len = 0, start = 0;
     while (df[len]) len++;
 	while (i < height) {
 		j = 0;
+        start = i * 4;
 		counter = 0;
 		while (j < len) {
 			value = (int)df[j][col]->d + abs((int)min);
@@ -58,9 +59,8 @@ void visualize_data(t_data_frame*** df, int col) {
 			if (value == i) {
 				color_number = define_color(df[j][1]->s);
 				attron(COLOR_PAIR(color_number));
-				// move(top_lines + (i * house_offset(df[j][1]->s)), counter);
-				// addch('|');
-				mvhline(i + top_lines, counter, '|', value);
+				move(top_lines + start + house_offset(df[j][1]->s), counter);
+				addch('|');
 				attroff(COLOR_PAIR(color_number));
 				counter++;
 			}
