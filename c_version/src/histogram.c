@@ -38,10 +38,10 @@ void visualize_data(t_data_frame*** df, int col) {
 	
 	initscr(); // open visualization in terminal
 	start_color(); // set color capabilities on
-	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(2, COLOR_RED, COLOR_BLACK);
-	init_pair(3, COLOR_BLACK, COLOR_BLACK);
-	init_pair(4, COLOR_GREEN, COLOR_BLACK);
+	init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Gryffindor
+	init_pair(2, COLOR_RED, COLOR_BLACK); // Hufflepuff
+	init_pair(3, COLOR_WHITE, COLOR_BLACK); // Ravenclaw
+	init_pair(4, COLOR_GREEN, COLOR_BLACK); // Slytherin
 
 	addstr("Histogram for:\n");
 	printw("%s\n", df[0][col]->s);
@@ -58,6 +58,8 @@ void visualize_data(t_data_frame*** df, int col) {
 			if (value == i) {
 				color_number = define_color(df[j][1]->s);
 				attron(COLOR_PAIR(color_number));
+				// move(top_lines + (i * house_offset(df[j][1]->s)), counter);
+				// addch('|');
 				mvhline(i + top_lines, counter, '|', value);
 				attroff(COLOR_PAIR(color_number));
 				counter++;
@@ -66,6 +68,7 @@ void visualize_data(t_data_frame*** df, int col) {
 		}
 		i++;
 	}
+
 	refresh(); // update window content
 	getch(); // read a char from keyboard
 	endwin(); // close windows
