@@ -1,4 +1,5 @@
-#include "dslr.h"
+#include "../include/describe.h"
+#include "../include/utils.h"
 
 int array_len(double *array) {
 	int c = 0;
@@ -75,45 +76,36 @@ double find_min(t_data_frame ***df, int col) {
 	return min;
 }
 
-void sort_column(t_data_frame ***df, int col) {
-	// funziona ma é lento in culo
-	t_data_frame *temp;
-	for (int i = 1; df[i]; i++) {
-		if (df[i][col] && df[i][col]->valid && df[i][col]->type == DOUBLE) {
-			if (df[i + 1] && df[i + 1][col] && df[i + 1][col]->valid && df[i + 1][col]->type == DOUBLE) {
-				if (df[i][col]->d > df[i + 1][col]->d) {
-					temp = df[i][col];
-					df[i][col] = df[i + 1][col];
-					df[i + 1][col] = temp;
-					i = 1;
-				}
-			}
-		}
-	}
-}
-
-int compare(const void *a, const void *b) {
+static int compare(const void *a, const void *b) {
 	return (*(double *)a - *(double *)b);
 }
 
 void percentiles(t_data_frame ***df, int col, double *l, double *m, double *h)
 {
 	int i = 0;
-	while (df[i]) i++;
-	double *arr = malloc(sizeof(double) * (i - 1));
+	while (df[i])
+		i++;
+	double *arr = malloc((i - 1) * sizeof(double));
 
 	for (int j = 1; df[j]; j++) {
 		if (df[j][col]->valid) {
 			arr[j] = df[j][col]->d;
 		}
 	}
-	// sort_column(df, col);
 	qsort(arr, i - 1, sizeof(double), compare);
 	printf("%f %f %f\n",*l, *m, *h);
-	for (int j = 0; j < i - 1; j++) {
-		printf("%f\n", arr[j]);
-	}
 	free(arr);
+}
+
+void free_statistics(t_feature *features)
+{
+	t_feature *to_del;
+	while (features) {
+		to_del = features;
+		features = features->next;
+		free(to_del->name);
+		free(to_del);
+	}
 }
 
 t_feature* get_statistics(t_data_frame ***df)

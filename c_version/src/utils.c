@@ -1,4 +1,52 @@
-#include "dslr.h"
+#include "../include/utils.h"
+
+int is_valid(char *s)
+{
+	return s[0] != 0;
+}
+
+int is_number(char *s)
+{
+	int discriminant = 0;
+	for (int i = 0; s[i]; i++) {
+		if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.' || s[i] == '-') {
+			if (s[i] == '-') discriminant++;
+			if (discriminant > 1) return 0;
+			continue;
+		} else {
+			return 0;
+		}
+	}
+	return s != NULL;
+}
+
+int is_valid_column(t_data_frame ***df, int col)
+{
+	for (int i = 1; df[i]; i++) {
+		if (df[i][col]->valid && df[i][col]->type == STRING)
+			return 0;
+	}
+	return 1;
+}
+
+char* substring(char *string, int begin, int end) {
+	if (begin > end) {
+		perror("Last index can't be smaller than the first one\n");
+		exit(1);
+	}
+
+	int len = end - begin;
+	char* r = malloc(sizeof(char) * (len + 1));
+	r[len] = '\0';
+
+	int i = 0;
+	while (i < len) {
+		r[i] = string[begin];
+		begin++;
+		i++;
+	}
+	return r;
+}
 
 char **split(char *s, char limit_char) {
 	char **r;

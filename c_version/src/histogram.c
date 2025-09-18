@@ -1,11 +1,6 @@
-#include "histogram.h"
-
-// COLORS = {
-// 	'GRYFFINDOR': 'YELLOW',
-// 	'HUFFLEPUFF': 'RED',
-// 	'RAVENCLAW': 'GRAY',
-// 	'SLYTHERIN': 'GREEN',
-// }
+#include "../include/data_frame.h"
+#include "../include/histogram.h"
+#include "../include/describe.h"
 
 int house_offset(char *hogwarts_house) {
 	if (!strcmp(hogwarts_house, "Gryffindor"))
@@ -33,9 +28,9 @@ int define_color(char *hogwarts_house) {
 		return(COLOR_WHITE);
 }
 
-void visualize_data(char ***matrix, int col, int matrix_len) {
-	double min = find_min(matrix, col);
-	double max = find_max(matrix, col);
+void visualize_data(t_data_frame*** df, int col) {
+	double min = find_min(df, col);
+	double max = find_max(df, col);
 
 	int height = (int)(max - min);
 	int top_lines = 2;
@@ -49,17 +44,19 @@ void visualize_data(char ***matrix, int col, int matrix_len) {
 	init_pair(4, COLOR_GREEN, COLOR_BLACK);
 
 	addstr("Histogram for:\n");
-	printw("%s\n", matrix[0][col]);
+	printw("%s\n", df[0][col]->s);
 
 	int i = 0, j = 0, value = 0, counter = 0, color_number = 0;
+    int len = 0;
+    while (df[len]) len++;
 	while (i < height) {
 		j = 0;
 		counter = 0;
-		while (j < matrix_len) {
-			value = atoi(matrix[j][col]) + abs((int)min);
+		while (j < len) {
+			value = (int)df[j][col]->d + abs((int)min);
 			// add char at the end of line at 'i'
 			if (value == i) {
-				color_number = define_color(matrix[j][1]);
+				color_number = define_color(df[j][1]->s);
 				attron(COLOR_PAIR(color_number));
 				mvhline(i + top_lines, counter, '|', value);
 				attroff(COLOR_PAIR(color_number));
@@ -84,35 +81,9 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	FILE* csv_file = fopen(argv[1], "r");
-	
-	if (csv_file)
-		printf("CSV File open\n\n");
-	else {
-		perror("File not open. Quitting");
-		exit(1);
-	}
+    t_data_frame*** df = get_data_frame(argv[1]);
 
-	char buffer[2048];
-	int c = 0;
+    visualize_data(df, atoi(argv[2]));
 
-	while (fgets(buffer, 2048, csv_file))
-		c++;
-
-	printf("%d lines counted in csv file\n\n", c);
-	char ***matrix = malloc(sizeof(char**) * (c + 1));
-	matrix[c] = NULL;
-	
-	rewind(csv_file);
-	c = 0;
-	while (fgets(buffer, 2048, csv_file)) {
-		matrix[c] = split(buffer, ',');
-		c++;
-	}
-	
-	visualize_data(matrix, atoi(argv[2]), c);
-	free_matrix(matrix);
-
-	fclose(csv_file);
-	return 0;
+    free_data_frame(df);
 }
