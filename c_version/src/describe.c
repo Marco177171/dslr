@@ -19,6 +19,9 @@ int main(int argc, char **argv) {
 		printf("mean: %f\n", cpy->stats.mean);
 		printf("std: %f\n", cpy->stats.std);
 		printf("min: %f\n", cpy->stats.min);
+		printf("25%%: %f\n", cpy->stats.twentyfive);
+		printf("50%%: %f\n", cpy->stats.fifty);
+		printf("75%%: %f\n", cpy->stats.seventyfive);
 		printf("max: %f\n", cpy->stats.max);
 		
 		cpy = cpy->next;

@@ -93,7 +93,14 @@ void percentiles(t_data_frame ***df, int col, double *l, double *m, double *h)
 		}
 	}
 	qsort(arr, i - 1, sizeof(double), compare);
-	printf("%f %f %f\n",*l, *m, *h);
+	int twentyfive = ((int)((double)(25.0 / 100.0) * (double)i));
+	int fifty = ((int)((double)(50.0 / 100.0) * (double)i));
+	int seventyfive = ((int)((double)(75.0 / 100.0) * (double)i));
+	for (int c = 0; c < i; c++) {
+		if (c == twentyfive) *l = arr[c];
+		if (c == fifty) *m = arr[c];
+		if (c == seventyfive) *h = arr[c];
+	}
 	free(arr);
 }
 
