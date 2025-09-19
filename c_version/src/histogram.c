@@ -30,8 +30,8 @@ int define_color(char *hogwarts_house) {
 
 void print_current_line(int top_lines, int start, int color_number, int len) {
 	attron(COLOR_PAIR(color_number));
-	move(top_lines + start + color_number - 1, 0);
-	hline('|', len);
+	move(top_lines + 1, start + color_number - 1);
+	vline('|', len);
 	attroff(COLOR_PAIR(color_number));
 }
 
@@ -52,7 +52,7 @@ void visualize_data(t_data_frame*** df, int col) {
 	addstr("Histogram for:\n");
 	printw("%s\n", df[0][col]->s);
 
-	int i = 0, j = 0, value = 0, counter = 0, color_number = 0;
+	int i = 0, j = 0, value = 0, color_number = 0;
 	int len = 0;
 	int start = 0;
 	int gryffindor = 0, hufflepuff = 0, ravenclaw = 0, slytherin = 0;
@@ -79,8 +79,6 @@ void visualize_data(t_data_frame*** df, int col) {
 					ravenclaw++;
 				else if (color_number == 4)
 					slytherin++;
-				
-				counter++;
 			}
 			j++;
 		}
