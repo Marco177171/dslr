@@ -31,7 +31,7 @@ int define_color(char *hogwarts_house) {
 void print_current_line(int top_lines, int start, int color_number, int len) {
 	attron(COLOR_PAIR(color_number));
 	move(top_lines + 1, start + color_number - 1);
-	vline('|', len);
+	vline('|', len / 5);
 	attroff(COLOR_PAIR(color_number));
 }
 
@@ -82,6 +82,8 @@ void visualize_data(t_data_frame*** df, int col) {
 			}
 			j++;
 		}
+        move(top_lines, start);
+        printw("%d\n", (int)(i - min));
 		print_current_line(top_lines, start, 1, gryffindor);
 		print_current_line(top_lines, start, 2, hufflepuff);
 		print_current_line(top_lines, start, 3, ravenclaw);
