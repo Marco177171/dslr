@@ -83,7 +83,7 @@ void visualize_data(t_data_frame*** df, int col) {
 			j++;
 		}
         move(top_lines, start);
-        printw("%d\n", (int)(i - min));
+        printw("%d\n", (int)(i + min));
 		print_current_line(top_lines, start, 1, gryffindor);
 		print_current_line(top_lines, start, 2, hufflepuff);
 		print_current_line(top_lines, start, 3, ravenclaw);
@@ -107,8 +107,6 @@ int main(int argc, char **argv) {
 	}
 
 	t_data_frame*** df = get_data_frame(argv[1]);
-
 	visualize_data(df, atoi(argv[2]));
-
 	free_data_frame(df);
 }
