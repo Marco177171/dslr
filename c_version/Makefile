@@ -53,4 +53,7 @@ clean:
 fclean: clean
 	rm -rf $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT)
 
+unistall_sdl:
+	rm -rf $(SDL_DIR)
+
 re: clean all
