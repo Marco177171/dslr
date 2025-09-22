@@ -1,7 +1,6 @@
 #include "../include/data_frame.h"
 #include "../include/scatter_plot.h"
 #include "../include/describe.h"
-#include <SDL2/SDL.h>
 
 int define_color(char *hogwarts_house) {
 	if (!strcmp(hogwarts_house, "Gryffindor"))
@@ -23,6 +22,7 @@ int define_color(char *hogwarts_house) {
 // }
 
 void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
+
 	double min_1 = find_min(df, feat_1);
 	double max_1 = find_max(df, feat_1);
 	// int h_1 = (int)(max_1 - min_1);
@@ -32,8 +32,18 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	// int h_2 = (int)(max_2 - min_2);
 	
 	// int top_lines = 2;
+	SDL_Window *window = SDL_CreateWindow("Scatter Plot", 10, 10, 1080, 720, SDL_WINDOW_BORDERLESS);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-	SDL_Window *window = SDL_CreateWindow("Scatter Plot", 10, 10, 1080, 720, SDL_WINDOW_RESIZABLE);
+	SDL_Color *gryffondor;
+	SDL_Color *hufflepuff;
+	SDL_Color *ravenclaw;
+	SDL_Color *slytherin;
+
+	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
+	SDL_RenderClear(renderer);
+	SDL_RenderPresent(renderer);
+
 	// initscr(); // open visualization in terminal
 	// start_color(); // set color capabilities on
 	// init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Gryffindor
@@ -62,7 +72,22 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	// getch(); // read a char from keyboard
 	// endwin(); // close windows
 	// clear(); // clear screen, back to terminal
-	SDL_DestroyWindow(window);
+	SDL_Event event;
+	bool running = true;
+	while (running) {
+		SDL_PollEvent(&event);
+		switch (event.type)
+		{
+			case (SDL_MOUSEBUTTONDOWN):
+				SDL_DestroyWindow(window);
+				SDL_Quit();
+				running = false;
+				break;
+			
+			default:
+				break;
+		}
+	}
 	
 	printf("1: MIN : %f | MAX : %f\n", min_1, max_1);
 	printf("2: MIN : %f | MAX : %f\n", min_2, max_2);
