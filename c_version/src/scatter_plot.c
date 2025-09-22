@@ -32,13 +32,13 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	// int h_2 = (int)(max_2 - min_2);
 	
 	// int top_lines = 2;
-	SDL_Window *window = SDL_CreateWindow("Scatter Plot", 10, 10, 1080, 720, SDL_WINDOW_BORDERLESS);
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+	SDL_Window *window = SDL_CreateWindow("Scatter Plot", 1080, 720, SDL_WINDOW_FULLSCREEN);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL, 0);
 
-	SDL_Color *gryffondor;
-	SDL_Color *hufflepuff;
-	SDL_Color *ravenclaw;
-	SDL_Color *slytherin;
+	// SDL_Color *gryffondor;
+	// SDL_Color *hufflepuff;
+	// SDL_Color *ravenclaw;
+	// SDL_Color *slytherin;
 
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
 	SDL_RenderClear(renderer);
@@ -78,7 +78,7 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 		SDL_PollEvent(&event);
 		switch (event.type)
 		{
-			case (SDL_MOUSEBUTTONDOWN):
+			case (SDL_EVENT_MOUSE_BUTTON_DOWN):
 				SDL_DestroyWindow(window);
 				SDL_Quit();
 				running = false;
