@@ -1,6 +1,6 @@
-#include "../include/data_frame.h"
-#include "../include/histogram.h"
-#include "../include/describe.h"
+#include <data_frame.h>
+#include <histogram.h>
+#include <describe.h>
 
 int house_offset(char *hogwarts_house) {
 	if (!strcmp(hogwarts_house, "Gryffindor"))

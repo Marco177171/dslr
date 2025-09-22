@@ -1,5 +1,5 @@
-#include "../include/describe.h"
-#include "../include/utils.h"
+#include <describe.h>
+#include <utils.h>
 
 int array_len(double *array) {
 	int c = 0;

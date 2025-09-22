@@ -1,5 +1,5 @@
-#include "../include/describe.h"
-#include "../include/utils.h"
+#include <describe.h>
+#include <utils.h>
 
 void print_data_frame(t_data_frame*** df)
 {

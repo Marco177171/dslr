@@ -1,5 +1,5 @@
-#include "../include/describe.h"
-#include "../include/data_frame.h"
+#include <describe.h>
+#include <data_frame.h>
 
 int main(int argc, char **argv) {
 	

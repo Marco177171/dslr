@@ -23,9 +23,10 @@ SCATTER_PLOT_SRCS = $(addprefix $(SRCDIR)/, $(SCATTER_PLOT_SRC))
 SCATTER_PLOT_OBJS = $(SCATTER_PLOT_SRCS:.c=.o)
 
 # compiling options
-FLAGS = -Werror -Wextra -Wall
+FLAGS = -Werror -Wextra -Wall -Iinclude
 SDL_DIR = ${HOME}/SDL
-INCLUDE = -I$(SDL_DIR)/include -L$(SDL_DIR)/lib -lSDL3
+INCLUDES = data_frame.h describe.h histogram.h scatter_plot.h utils.h
+SDL_INCLUDE = -I$(SDL_DIR)/include -Wl,-rpath=$(SDL_DIR)/lib -L$(SDL_DIR)/lib -lSDL3
 CC = gcc
 
 all: install_sdl $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT)
@@ -39,13 +40,13 @@ $(DESCRIBE): $(DESCRIBE_OBJS)
 	$(CC) $(FLAGS) $(DESCRIBE_OBJS) -o $(DESCRIBE) -lm
 
 $(HISTOGRAM): $(HISTOGRAM_OBJS)
-	$(CC) $(FLAGS) $(HISTOGRAM_OBJS) -o $(HISTOGRAM) -lncurses -lm $(INCLUDE)
+	$(CC) $(FLAGS) $(HISTOGRAM_OBJS) -o $(HISTOGRAM) -lncurses -lm $(SDL_INCLUDE)
 
 $(SCATTER_PLOT): $(SCATTER_PLOT_OBJS)
-	$(CC) $(FLAGS) $(SCATTER_PLOT_OBJS) -o $(SCATTER_PLOT) -lncurses -lm $(INCLUDE)
+	$(CC) $(FLAGS) $(SCATTER_PLOT_OBJS) -o $(SCATTER_PLOT) -lncurses -lm $(SDL_INCLUDE)
 
 %.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@ $(SDL_INCLUDE)
 
 clean:
 	rm -rf src/*.o

@@ -2,6 +2,8 @@
     "files.associations": {
         "scatter_plot.h": "c",
         "cstdlib": "c",
-        "describe.h": "c"
+        "describe.h": "c",
+        "sdl.h": "c",
+        "histogram.h": "c"
     }
 }

@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "../include/data_frame.h"
+#include <data_frame.h>
 #include <stdlib.h>
 #include <stdio.h>
 

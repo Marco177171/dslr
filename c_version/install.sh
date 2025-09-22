@@ -10,6 +10,7 @@ cmake --build build
 echo installing SDL3 locally in "$HOME/SDL"
 cmake --install build --prefix $HOME/SDL
 
+
 echo removing installation dir
 cd ..
 rm -rf SDL3-3.2.22

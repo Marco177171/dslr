@@ -1,6 +1,6 @@
-#include "../include/data_frame.h"
-#include "../include/scatter_plot.h"
-#include "../include/describe.h"
+#include <data_frame.h>
+#include <scatter_plot.h>
+#include <describe.h>
 
 int define_color(char *hogwarts_house) {
 	if (!strcmp(hogwarts_house, "Gryffindor"))
@@ -33,7 +33,7 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	
 	// int top_lines = 2;
 	SDL_Window *window = SDL_CreateWindow("Scatter Plot", 1080, 720, SDL_WINDOW_FULLSCREEN);
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL, 0);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
 
 	// SDL_Color *gryffondor;
 	// SDL_Color *hufflepuff;
