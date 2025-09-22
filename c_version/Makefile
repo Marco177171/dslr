@@ -24,18 +24,25 @@ SCATTER_PLOT_OBJS = $(SCATTER_PLOT_SRCS:.c=.o)
 
 # compiling options
 FLAGS = -Werror -Wextra -Wall
+SDL_DIR = ${HOME}/SDL
+INCLUDE = -I$(SDL_DIR)/include -L$(SDL_DIR)/lib -lSDL3
 CC = gcc
 
-all: $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT)
+all: install_sdl $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT)
+
+install_sdl:
+	@if [ ! -d "${HOME}/SDL" ]; then \
+		chmod +x install.sh; bash install.sh; \
+	fi
 
 $(DESCRIBE): $(DESCRIBE_OBJS)
 	$(CC) $(FLAGS) $(DESCRIBE_OBJS) -o $(DESCRIBE) -lm
 
 $(HISTOGRAM): $(HISTOGRAM_OBJS)
-	$(CC) $(FLAGS) $(HISTOGRAM_OBJS) -o $(HISTOGRAM) -lncurses -lm -lSDL2main -lSDL2
+	$(CC) $(FLAGS) $(HISTOGRAM_OBJS) -o $(HISTOGRAM) -lncurses -lm $(INCLUDE)
 
 $(SCATTER_PLOT): $(SCATTER_PLOT_OBJS)
-	$(CC) $(FLAGS) $(SCATTER_PLOT_OBJS) -o $(SCATTER_PLOT) -lncurses -lm -lSDL2main -lSDL2
+	$(CC) $(FLAGS) $(SCATTER_PLOT_OBJS) -o $(SCATTER_PLOT) -lncurses -lm $(INCLUDE)
 
 %.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@
