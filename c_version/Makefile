@@ -32,10 +32,10 @@ $(DESCRIBE): $(DESCRIBE_OBJS)
 	$(CC) $(FLAGS) $(DESCRIBE_OBJS) -o $(DESCRIBE) -lm
 
 $(HISTOGRAM): $(HISTOGRAM_OBJS)
-	$(CC) $(FLAGS) $(HISTOGRAM_OBJS) -o $(HISTOGRAM) -lncurses -lm
+	$(CC) $(FLAGS) $(HISTOGRAM_OBJS) -o $(HISTOGRAM) -lncurses -lm -lSDL2main -lSDL2
 
 $(SCATTER_PLOT): $(SCATTER_PLOT_OBJS)
-	$(CC) $(FLAGS) $(SCATTER_PLOT_OBJS) -o $(SCATTER_PLOT) -lncurses -lm
+	$(CC) $(FLAGS) $(SCATTER_PLOT_OBJS) -o $(SCATTER_PLOT) -lncurses -lm -lSDL2main -lSDL2
 
 %.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@
