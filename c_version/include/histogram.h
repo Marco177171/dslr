@@ -3,5 +3,6 @@
 
 #include <stdlib.h>
 #include <ncurses.h>
+#include <SDL2/SDL.h>
 
 #endif
