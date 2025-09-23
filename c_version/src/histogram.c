@@ -95,7 +95,6 @@ void visualize_data(t_data_frame*** df, int col) {
 		print_current_line(top_lines, start, 4, slytherin);
 		i++;
 	}
-
 	refresh(); // update window content
 	getch(); // read a char from keyboard
 	endwin(); // close windows
