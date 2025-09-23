@@ -25,55 +25,51 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 
 	double min_1 = find_min(df, feat_1);
 	double max_1 = find_max(df, feat_1);
-	// int h_1 = (int)(max_1 - min_1);
+	int h_1 = (int)(max_1 - min_1);
 
 	double min_2 = find_min(df, feat_2);
 	double max_2 = find_max(df, feat_2);
-	// int h_2 = (int)(max_2 - min_2);
-	
+	int h_2 = (int)(max_2 - min_2);
+
+	// double abs_min = min_1;
+	// if (min_2 < min_1)
+	// 	abs_min = min_2;
+
+	// double abs_max = max_1;
+	// if (max_2 > max_1)
+	// 	abs_max = max_2;
+
 	// int top_lines = 2;
-	SDL_Window *window = SDL_CreateWindow("Scatter Plot", 1080, 720, SDL_WINDOW_FULLSCREEN);
+	SDL_Window *window = SDL_CreateWindow("Scatter Plot", h_1, h_2, SDL_WINDOW_FULLSCREEN);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
 
-	// SDL_Color *gryffondor;
-	// SDL_Color *hufflepuff;
-	// SDL_Color *ravenclaw;
-	// SDL_Color *slytherin;
+	int w_height;
+	int w_width;
+	SDL_GetWindowSize(window, &w_width, &w_height);
 
+	// compute modulus:
+	// draw initial grid
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
-	SDL_RenderClear(renderer);
-	SDL_RenderPresent(renderer);
-
-	// initscr(); // open visualization in terminal
-	// start_color(); // set color capabilities on
-	// init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Gryffindor
-	// init_pair(2, COLOR_RED, COLOR_BLACK); // Hufflepuff
-	// init_pair(3, COLOR_WHITE, COLOR_BLACK); // Ravenclaw
-	// init_pair(4, COLOR_GREEN, COLOR_BLACK); // Slytherin
-
-	// addstr("Scatter Plot for:\n");
-	// printw("%s | %s\n", df[0][feat_1]->s, df[0][feat_2]->s);
-
-	// int i = 0;
-	// int len = 0; // jump first line of the CSV file
-	// int color_number = 0;
-
-	// while (df[len]) len++;
-	// // cycle among students
-	// while (i < len) {
-	// 	color_number = define_color(df[i][1]->s);
-	// 	attron(COLOR_PAIR(color_number));
-	// 	mvaddch(top_lines + (int)df[i][feat_1]->d + abs((int)min_1), (int)df[i][feat_2]->d, '+');
-	// 	attroff(COLOR_PAIR(color_number));
+	int i = 0;
+	// while (i <= w_height) {
+	// 	if (i % 10 == 0)
+	// 		SDL_RenderLine(renderer, 0, i, w_width, i);
 	// 	i++;
 	// }
+	while (i <= w_height) {
+		SDL_RenderLine(renderer, 0, i, w_width, i); // devo accedere con l'&?
+		i += 10;
+	}
+	i = 0;
+	while (i <= w_width) {
+		SDL_RenderLine(renderer, i, 0, i, w_height);
+		i += 10;
+	}
+	SDL_RenderPresent(renderer);
 
-	// refresh(); // update window content
-	// getch(); // read a char from keyboard
-	// endwin(); // close windows
-	// clear(); // clear screen, back to terminal
 	SDL_Event event;
 	bool running = true;
+	
 	while (running) {
 		SDL_PollEvent(&event);
 		switch (event.type)
