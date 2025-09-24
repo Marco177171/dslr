@@ -8,7 +8,7 @@ void define_color(char *hogwarts_house, SDL_Renderer *renderer) {
 	else if (!strcmp(hogwarts_house, "Hufflepuff"))
 		SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255);
 	else if (!strcmp(hogwarts_house, "Ravenclaw"))
-		SDL_SetRenderDrawColor(renderer, 102, 102, 102, 255);
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	else if (!strcmp(hogwarts_house, "Slytherin"))
 		SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
 }
@@ -23,13 +23,13 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 
 	double min_1 = find_min(df, feat_1);
 	double max_1 = find_max(df, feat_1);
-	double f_one_extension = max_1 - min_1;
+	double ext_one = max_1 - min_1;
 
 	double min_2 = find_min(df, feat_2);
 	double max_2 = find_max(df, feat_2);
-	double f_two_extension = max_2 - min_2;
+	double ext_two = max_2 - min_2;
 
-	// double abs_min = min_1;ls
+	// double abs_min = min_1;
 	// if (min_2 < min_1)
 	// 	abs_min = min_2;
 	
@@ -51,10 +51,10 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	int w_width = 0;
 	SDL_GetWindowSizeInPixels(window, &w_width, &w_height);
 
-	double module_f_one = (w_width / f_one_extension); // orizzontale
-	double module_f_two = (w_height / f_two_extension); // verticale
+	double mod_one = (w_width / ext_one); // orizzontale
+	double mod_two = (w_height / ext_two); // verticale
 	
-	printf("h %f w %f\n", module_f_one, module_f_two);
+	printf("h %f w %f\n", mod_one, mod_two);
 	printf("h %d w %d\n", w_width, w_height);
 
 	// compute modulus:
@@ -62,23 +62,26 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
 	int i = 0;
 	while (i <= w_height) {
-		if (i % (int)module_f_one == 0)
+		if (i % (int)mod_one == 0)
 			SDL_RenderLine(renderer, 0, i, w_width, i);
 		i++;
 	}
 	
 	i = 0;
 	while (i <= w_width) {
-		if (i % (int)module_f_two == 0)
+		if (i % (int)mod_two == 0)
 			SDL_RenderLine(renderer, i, 0, i, w_height);
 		i++;
 	}
 
-	i = 1;
-	// int house_color = 0;
+	i = 0;
 	while (df[i]) {
 		define_color(df[i][1]->s, renderer);
-		SDL_RenderPoint(renderer, (int)(module_f_one * df[i][feat_1]->d), (int)(module_f_two * df[i][feat_2]->d));
+		SDL_RenderPoint(
+			renderer,
+			(int)(((df[i][feat_1]->d) + -(min_1)) * mod_one),
+			w_height - (int)(((df[i][feat_2]->d) + -(min_2)) * mod_two)
+		);
 		i++;
 	}
 
