@@ -13,11 +13,29 @@ void define_color(char *hogwarts_house, SDL_Renderer *renderer) {
 		SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
 }
 
-// void print_current_dot(int color_number, int score_1, int score_2) {
-// 	attron(COLOR_PAIR(color_number));
-// 	mvaddch(2 + score_1, score_2, '+');
-// 	attroff(COLOR_PAIR(color_number));
-// }
+void draw_origin(SDL_Renderer *renderer, 
+	int f1_origin, int f2_origin,
+	int w_width, int w_height) {
+	
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderLine(renderer, f1_origin, 0, f1_origin, w_height); // x axis
+	SDL_RenderLine(renderer, 0, f2_origin, w_width, f2_origin); // y axis
+}
+
+void draw_points(SDL_Renderer *renderer, t_data_frame ***df, 
+	int feat_1, int feat_2, 
+	double f_one_unit, double f_two_unit, 
+	int f_one_origin, int f_two_origin)
+	{
+	int i = 0;
+	while (df[i]) {
+		define_color(df[i][1]->s, renderer);
+		SDL_RenderPoint(renderer, 
+			f_one_origin + (int)(df[i][feat_1]->d * f_one_unit), 
+			f_two_origin - (int)(df[i][feat_2]->d * f_two_unit));
+		i++;
+	}
+}
 
 void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 
@@ -28,15 +46,6 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	double min_2 = find_min(df, feat_2);
 	double max_2 = find_max(df, feat_2);
 	double ext_two = max_2 - min_2;
-
-	// double abs_min = min_1;
-	// if (min_2 < min_1)
-	// 	abs_min = min_2;
-	
-	// double abs_max = max_1;
-	// if (max_2 > max_1)
-	// 	abs_max = max_2;
-	// int top_lines = 2;
 	
 	SDL_Window *window;
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -49,47 +58,23 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	
 	int w_height = 0;
 	int w_width = 0;
-	SDL_GetWindowSizeInPixels(window, &w_width, &w_height);
+	SDL_GetWindowSizeInPixels(window, &w_width, &w_height); // store window size in variables
 
-	double mod_one = (w_width / ext_one); // orizzontale
-	double mod_two = (w_height / ext_two); // verticale
+	double f_one_unit = (w_width / ext_one); // horizontal unit
+	double f_two_unit = (w_height / ext_two); // vertical unit
+
+	int f1_origin = abs((int)(min_1 * f_one_unit));
+	int f2_origin = (int)(max_2 * f_two_unit);
 	
-	printf("h %f w %f\n", mod_one, mod_two);
+	printf("h %f w %f\n", f_one_unit, f_two_unit);
 	printf("h %d w %d\n", w_width, w_height);
 
-	// compute modulus:
-	// draw initial grid
-	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
-	int i = 0;
-	while (i <= w_height) {
-		if (i % (int)mod_one == 0)
-			SDL_RenderLine(renderer, 0, i, w_width, i);
-		i++;
-	}
-	
-	i = 0;
-	while (i <= w_width) {
-		if (i % (int)mod_two == 0)
-			SDL_RenderLine(renderer, i, 0, i, w_height);
-		i++;
-	}
-
-	i = 0;
-	while (df[i]) {
-		define_color(df[i][1]->s, renderer);
-		SDL_RenderPoint(
-			renderer,
-			(int)(((df[i][feat_1]->d) + -(min_1)) * mod_one),
-			w_height - (int)(((df[i][feat_2]->d) + -(min_2)) * mod_two)
-		);
-		i++;
-	}
-
+	draw_origin(renderer, f1_origin, f2_origin, w_width, w_height);
+	draw_points(renderer, df, feat_1, feat_2, f_one_unit, f_two_unit, f1_origin, f2_origin);
 	SDL_RenderPresent(renderer);
 
 	SDL_Event event;
 	bool running = true;
-
 	while (running) {
 		SDL_PollEvent(&event);
 		switch (event.type)
