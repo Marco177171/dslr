@@ -13,11 +13,46 @@ void define_color(char *hogwarts_house, SDL_Renderer *renderer) {
 		SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
 }
 
+void draw_grid_from_origin(SDL_Renderer *renderer, 
+	int f1_origin, int f2_origin,
+	double f1_unit, double f2_unit,
+	int w_width, int w_height) {
+	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
+	
+	int i = f1_origin + 1;
+	while (i <= w_width) {
+		if ((i - f1_origin) % (int)(f1_unit) == 0)
+			SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
+		i++;
+	}
+	i = f1_origin - 1;
+	while (i >= 0) {
+		if ((i - f1_origin) % (int)(f1_unit) == 0)
+			SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
+		i--;
+	}
+
+	i = f2_origin + 1;
+	while (i <= w_height) {
+		if ((i - f2_origin) % (int)(f2_unit) == 0)
+			SDL_RenderLine(renderer, 0, i, w_width, i); // y negative axis
+		i++;
+	}
+	i = f2_origin - 1;
+	while (i >= 0) {
+		if ((i - f2_origin) % (int)(f2_unit) == 0)
+			SDL_RenderLine(renderer, 0, i, w_width, i); // y positive axis
+		i--;
+	}
+	
+	SDL_RenderLine(renderer, 0, f2_origin, w_width, f2_origin); // y axis
+}
+
 void draw_origin(SDL_Renderer *renderer, 
 	int f1_origin, int f2_origin,
 	int w_width, int w_height) {
 	
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 127, 127, 127, 255);
 	SDL_RenderLine(renderer, f1_origin, 0, f1_origin, w_height); // x axis
 	SDL_RenderLine(renderer, 0, f2_origin, w_width, f2_origin); // y axis
 }
@@ -69,6 +104,7 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	printf("h %f w %f\n", f_one_unit, f_two_unit);
 	printf("h %d w %d\n", w_width, w_height);
 
+	draw_grid_from_origin(renderer, f1_origin, f2_origin, f_one_unit, f_two_unit, w_width, w_height);
 	draw_origin(renderer, f1_origin, f2_origin, w_width, w_height);
 	draw_points(renderer, df, feat_1, feat_2, f_one_unit, f_two_unit, f1_origin, f2_origin);
 	SDL_RenderPresent(renderer);
