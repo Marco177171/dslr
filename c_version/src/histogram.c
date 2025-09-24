@@ -2,104 +2,132 @@
 #include <histogram.h>
 #include <describe.h>
 
-int house_offset(char *hogwarts_house) {
-	if (!strcmp(hogwarts_house, "Gryffindor"))
-		return (0);
-	else if (!strcmp(hogwarts_house, "Hufflepuff"))
-		return (1);
-	else if (!strcmp(hogwarts_house, "Ravenclaw"))
-		return (2);
-	else if (!strcmp(hogwarts_house, "Slytherin"))
-		return (3);
-	else
-		return(COLOR_WHITE);
+void draw_grid_from_origin(SDL_Renderer *renderer, 
+	int origin_x, int origin_y,
+	double f1_unit, double f2_unit,
+	int w_width, int w_height) {
+	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
+    
+    // draw vertical lines
+	int i = origin_x + f1_unit;
+	while (i <= w_width) {
+		SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
+		i += f1_unit;
+	}
+	i = origin_x - f1_unit;
+	while (i >= 0) {
+	    SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
+		i -= f1_unit;
+	}
+
+    // draw horizontal lines
+	i = origin_y + f2_unit;
+	while (i <= w_height) {
+		SDL_RenderLine(renderer, 0, i, w_width, i); // y negative axis
+		i += f2_unit;
+	}
+	i = origin_y - f2_unit;
+	while (i >= 0) {
+		SDL_RenderLine(renderer, 0, i, w_width, i); // y positive axis
+		i -= f2_unit;
+	}
+
+    // draw origin
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_RenderLine(renderer, 0, origin_y, w_width, origin_y); // x axis
+	SDL_RenderLine(renderer, origin_x, 0, origin_x, w_height); // y axis
 }
 
-int define_color(char *hogwarts_house) {
-	if (!strcmp(hogwarts_house, "Gryffindor"))
-		return (1);
-	else if (!strcmp(hogwarts_house, "Hufflepuff"))
-		return (2);
-	else if (!strcmp(hogwarts_house, "Ravenclaw"))
-		return (3);
-	else if (!strcmp(hogwarts_house, "Slytherin"))
-		return (4);
-	else
-		return(COLOR_WHITE);
-}
-
-void print_current_line(int top_lines, int start, int color_number, int len) {
-	attron(COLOR_PAIR(color_number));
-	move(top_lines + 1, start + color_number - 1);
-	vline('|', len);
-	attroff(COLOR_PAIR(color_number));
+void draw_students_at_score(SDL_Renderer *renderer, double width_unit, double height_unit, int score, 
+	int gryffindor, int hufflepuff, int ravenclaw, int slytherin) {
+	SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
+	SDL_RenderLine(renderer, score * width_unit, 0, score * width_unit, gryffindor * height_unit);
+	SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255);
+	SDL_RenderLine(renderer, (int)(width_unit * score + 10), 0, (int)(width_unit * score + 10), hufflepuff * height_unit);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderLine(renderer, (int)(width_unit * score + 20), 0, (int)(width_unit * score + 20), ravenclaw * height_unit);
+	SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
+	SDL_RenderLine(renderer, (int)(width_unit * score + 30), 0, (int)(width_unit * score + 30), slytherin * height_unit);
 }
 
 void visualize_data(t_data_frame*** df, int col) {
+	
 	double min = find_min(df, col);
 	double max = find_max(df, col);
-
-	int height = (int)(max - min);
+	double ext = max - min;
 	
-	int divider = 1;
-	while (divider < height)
-		divider *= 10;
-	
-	int top_lines = 2;
+	SDL_Window *window;
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s", SDL_GetError());
+		return ;
+	}
+	window = SDL_CreateWindow("Histogram", 640, 480, SDL_WINDOW_FULLSCREEN);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
+	SDL_SyncWindow(window);
 
-	initscr(); // open visualization in terminal
-	start_color(); // set color capabilities on
-	init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Gryffindor
-	init_pair(2, COLOR_RED, COLOR_BLACK); // Hufflepuff
-	init_pair(3, COLOR_WHITE, COLOR_BLACK); // Ravenclaw
-	init_pair(4, COLOR_GREEN, COLOR_BLACK); // Slytherin
+	int w_height = 0;
+	int w_width = 0;
+	SDL_GetWindowSizeInPixels(window, &w_width, &w_height); // store window size in variables
 
-	addstr("Histogram for:\n");
-	printw("%s\n", df[0][col]->s);
+	int i = 0;
+	while (df[i]) i++;
+	int width_unit = (int)(w_width / ext);
+	int height_unit = (int)(w_height / max);
 
-	int i = 0, j = 0, value = 0, color_number = 0;
-	int len = 0;
-	int start = 0;
-	int gryffindor = 0, hufflepuff = 0, ravenclaw = 0, slytherin = 0;
-	
-	while (df[len]) len++;
-	while (i < height) {
+	int origin_x = abs((int)(min * width_unit));
+	int origin_y = max * height_unit;
+
+	draw_grid_from_origin(renderer, origin_x, origin_y, width_unit, height_unit, w_width, w_height);
+
+	int gryffindor = 0;
+	int hufflepuff = 0;
+	int ravenclaw = 0;
+	int slytherin = 0;
+
+	int score = (int)min;
+	while (score <= (int)max) {
 		gryffindor = 0;
 		hufflepuff = 0;
 		ravenclaw = 0;
 		slytherin = 0;
 
-		j = 0;
-		start = i * 4;
-		while (j < len) {
-			value = (int)df[j][col]->d + abs((int)min);
-			if (value == i) {
-				color_number = define_color(df[j][1]->s);
-				
-				if (color_number == 1)
+		i = 0;
+		while (df[i]) {
+			if ((int)df[i][col]->d == (int)score) {
+				if (!strcmp(df[i][1]->s, "Gryffindor"))
 					gryffindor++;
-				else if (color_number == 2)
+				else if (!strcmp(df[i][1]->s, "Hufflepuff"))
 					hufflepuff++;
-				else if (color_number == 3)
+				else if (!strcmp(df[i][1]->s, "Ravenclaw"))
 					ravenclaw++;
-				else if (color_number == 4)
+				else if (!strcmp(df[i][1]->s, "Slytherin"))
 					slytherin++;
 			}
-			j++;
+			i++;
 		}
-		move(top_lines, start);
-		printw("%d\n", (int)(i + min));
-		print_current_line(top_lines, start, 1, gryffindor);
-		print_current_line(top_lines, start, 2, hufflepuff);
-		print_current_line(top_lines, start, 3, ravenclaw);
-		print_current_line(top_lines, start, 4, slytherin);
-		i++;
+		draw_students_at_score(renderer, width_unit, height_unit, score, gryffindor, hufflepuff, ravenclaw, slytherin);
+		score++;
 	}
-	refresh(); // update window content
-	getch(); // read a char from keyboard
-	endwin(); // close windows
-	clear(); // clear screen, back to terminal
-	
+
+	SDL_RenderPresent(renderer);
+
+	SDL_Event event;
+	bool running = true;
+	while (running) {
+		SDL_PollEvent(&event);
+		switch (event.type)
+		{
+			case (SDL_EVENT_MOUSE_BUTTON_DOWN):
+				SDL_DestroyWindow(window);
+				SDL_Quit();
+				running = false;
+				break;
+			
+			default:
+				break;
+		}
+	}
+
 	printf("MIN : %f | MAX : %f\n", min, max);
 }
 
