@@ -40,14 +40,37 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 
 void draw_students_at_score(SDL_Renderer *renderer, double width_unit, double height_unit, int score, 
 	int gryffindor, int hufflepuff, int ravenclaw, int slytherin) {
+	
+	(void) height_unit;
+	// print gryffindor line
 	SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
-	SDL_RenderLine(renderer, score * width_unit, 0, score * width_unit, gryffindor * height_unit);
+	int house_width = width_unit / 4;
+	int i = 0;
+	while (i < house_width) {
+		SDL_RenderLine(renderer, score * (int)width_unit + i, 0, score * (int)width_unit + i, gryffindor);
+		i++;
+	}
+	// print hufflepuff line
 	SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255);
-	SDL_RenderLine(renderer, (int)(width_unit * score + 10), 0, (int)(width_unit * score + 10), hufflepuff * height_unit);
+	i = 0;
+	while (i < house_width) {
+		SDL_RenderLine(renderer, score * (int)width_unit + i + house_width, 0, score * (int)width_unit + i + house_width, hufflepuff);
+		i++;
+	}
+	// print ravenclaw line
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderLine(renderer, (int)(width_unit * score + 20), 0, (int)(width_unit * score + 20), ravenclaw * height_unit);
+	i = 0;
+	while (i < house_width) {
+		SDL_RenderLine(renderer, score * (int)width_unit + i + (house_width * 2), 0, score * (int)width_unit + i + (house_width * 2), ravenclaw);
+		i++;
+	}
+	// print slytherin line
 	SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
-	SDL_RenderLine(renderer, (int)(width_unit * score + 30), 0, (int)(width_unit * score + 30), slytherin * height_unit);
+	i = 0;
+	while (i < house_width) {
+		SDL_RenderLine(renderer, score * (int)width_unit + i + (house_width * 3), 0, score * (int)width_unit + i + (house_width * 3), slytherin);
+		i++;
+	}
 }
 
 void visualize_data(t_data_frame*** df, int col) {
