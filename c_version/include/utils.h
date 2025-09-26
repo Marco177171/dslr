@@ -4,6 +4,7 @@
 #include <data_frame.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 char* substring(char *string, int begin, int end);
 char **split(char *s, char limit_char);
