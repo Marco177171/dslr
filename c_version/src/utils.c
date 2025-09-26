@@ -90,7 +90,7 @@ t_data_frame **load_df(char *s, char limit_char) {
 		i++;
 	}
 	limit_count++;
-	r = malloc(sizeof(t_data_frame*) * limit_count + 1);
+	r = malloc(sizeof(t_data_frame*) * (limit_count + 1));
 	r[limit_count] = NULL;
 	if (!r) {
 		perror("Malloc error for results list\n");
