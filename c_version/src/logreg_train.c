@@ -3,13 +3,6 @@
 #include <logreg_train.h>
 #include <math.h>
 
-#define LEARNING_RATE 0.01 
-#define ITERATIONS 10000 
-#define NUM_HOUSES 4
-#define NUM_FEATURES 14 
-#define STARTING_COL 6
-#define ENDING_COL 18
-
 void store_weights(FILE *fp, const char *house_name, double *weights, int n_features) {
     fprintf(fp, "%s", house_name);
 
@@ -141,7 +134,7 @@ void logreg_train(t_data_frame*** df) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        perror("Wrong number of arguments. Usage: logre_train <file.csv>");
+        perror("Wrong number of arguments. Usage: logreg_train <file.csv>");
         exit(EXIT_FAILURE);
     }
     t_data_frame*** df = get_data_frame(argv[1]);

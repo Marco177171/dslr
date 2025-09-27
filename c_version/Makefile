@@ -28,14 +28,20 @@ LOGREG_TRAIN_SRC = $(SRC) logreg_train.c
 LOGREG_TRAIN_SRCS = $(addprefix $(SRCDIR)/, $(LOGREG_TRAIN_SRC))
 LOGREG_TRAIN_OBJS = $(LOGREG_TRAIN_SRCS:.c=.o)
 
+# logreg predict
+LOGREG_PREDICT = logreg_predict
+LOGREG_PREDICT_SRC = $(SRC) logreg_predict.c
+LOGREG_PREDICT_SRCS = $(addprefix $(SRCDIR)/, $(LOGREG_PREDICT_SRC))
+LOGREG_PREDICT_OBJS = $(LOGREG_PREDICT_SRCS:.c=.o)
+
 # compiling options
 FLAGS = -Werror -Wextra -Wall -Iinclude
 SDL_DIR = ${HOME}/SDL
-INCLUDES = data_frame.h describe.h histogram.h scatter_plot.h utils.h
+INCLUDES = data_frame.h describe.h histogram.h scatter_plot.h utils.h logreg_train.h
 SDL_INCLUDE = -I$(SDL_DIR)/include -Wl,-rpath=$(SDL_DIR)/lib -L$(SDL_DIR)/lib -lSDL3
 CC = gcc
 
-all: install_sdl $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT) $(LOGREG_TRAIN)
+all: install_sdl $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT) $(LOGREG_TRAIN) $(LOGREG_PREDICT)
 
 install_sdl:
 	@if [ ! -d "${HOME}/SDL" ]; then \
@@ -54,6 +60,9 @@ $(SCATTER_PLOT): $(SCATTER_PLOT_OBJS)
 $(LOGREG_TRAIN): $(LOGREG_TRAIN_OBJS)
 	$(CC) $(FLAGS) $(LOGREG_TRAIN_OBJS) -o $(LOGREG_TRAIN) -lm
 
+$(LOGREG_PREDICT): $(LOGREG_PREDICT_OBJS)
+	$(CC) $(FLAGS) $(LOGREG_PREDICT_OBJS) -o $(LOGREG_PREDICT) -lm
+
 %.o: %.c
 	$(CC) $(FLAGS) -c $< -o $@ $(SDL_INCLUDE)
 
@@ -61,7 +70,7 @@ clean:
 	rm -rf src/*.o
 
 fclean: clean
-	rm -rf $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT) $(LOGREG_TRAIN)
+	rm -rf $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT) $(LOGREG_TRAIN) $(LOGREG_PREDICT)
 
 unistall_sdl:
 	rm -rf $(SDL_DIR)
