@@ -35,7 +35,7 @@ void print_matrix_row(t_data_frame **df);
 // statistics
 int array_len(double *array);
 double array_mean(t_data_frame ***df, int col);
-double standard_deviation(t_data_frame ***df, int col);
+double standard_deviation(t_data_frame ***df, double mean, int col);
 double find_max(t_data_frame ***df, int col);
 double find_min(t_data_frame ***df, int col);
 void sort_column(t_data_frame ***df, int col);

@@ -4,6 +4,7 @@
         "cstdlib": "c",
         "describe.h": "c",
         "sdl.h": "c",
-        "histogram.h": "c"
+        "histogram.h": "c",
+        "data_frame.h": "c"
     }
 }

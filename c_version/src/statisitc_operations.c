@@ -34,10 +34,9 @@ double array_mean(t_data_frame ***df, int col)
 	return sum / count;
 }
 
-double standard_deviation(t_data_frame ***df, int col)
+double standard_deviation(t_data_frame ***df, double mean, int col)
 {
 	int i = 0, count = 0;
-	double mean = array_mean(df, col);
 	double sums_squared = 0;
 	while (df[i]) {
 		if (df[i][col]->valid && df[i][col]->type == DOUBLE) {
@@ -47,7 +46,7 @@ double standard_deviation(t_data_frame ***df, int col)
 		}
 		i++;
 	}
-	return sqrt(sums_squared / (count + 1));
+	return sqrt(sums_squared / count);
 }
 
 double find_max(t_data_frame ***df, int col) {
@@ -123,8 +122,8 @@ t_feature* get_statistics(t_data_frame ***df)
 			t_feature *new = malloc(sizeof(t_feature));
 			new->name = strdup(df[0][i]->s);
 			new->stats.count = count(df, i);
-			new->stats.std = standard_deviation(df, i);
 			new->stats.mean = array_mean(df, i);
+			new->stats.std = standard_deviation(df, i, new->stats.mean);
 			new->stats.max = find_max(df, i);
 			new->stats.min = find_min(df, i);
 			percentiles(df, i, &new->stats.twentyfive, &new->stats.fifty, &new->stats.seventyfive);
