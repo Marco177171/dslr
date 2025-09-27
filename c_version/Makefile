@@ -61,7 +61,7 @@ clean:
 	rm -rf src/*.o
 
 fclean: clean
-	rm -rf $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT)
+	rm -rf $(DESCRIBE) $(HISTOGRAM) $(SCATTER_PLOT) $(LOGREG_TRAIN)
 
 unistall_sdl:
 	rm -rf $(SDL_DIR)
