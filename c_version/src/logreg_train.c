@@ -124,7 +124,38 @@ void perfect_student(t_student *student, t_data_frame ***df) {
 	}
 }
 
+void print_to_file(t_student *student, FILE *csv) {
+    int i = 0;
+    
+    while (student->features[i]) {
+        fprintf(csv, "%f", student->features[i]->avg);
+        if (student->features[i+1])
+            fprintf(csv, ",");
+        i++;
+    }
+    fprintf(csv, "\n");
+}
+
+void print_header_to_file(t_data_frame ***df, FILE *csv) {
+    int i = 0;
+
+    while (df[0][i]) {
+        fprintf(csv, "%s", df[0][i]->s);
+        if (df[0][i+1])
+            fprintf(csv, ",");
+        i++;
+    }
+    fprintf(csv, "\n");
+}
+
 void train(t_data_frame ***df) {
+    
+    FILE *csv = fopen("perfect_students.csv", "w");
+    if (!csv) {
+        perror("Could not create or open csv file");
+        exit(EXIT_FAILURE);
+    }
+
 	t_student *gryffindor = init_student("Gryffindor");
 	t_student *hufflepuff = init_student("Hufflepuff");
 	t_student *ravenclaw = init_student("Ravenclaw");
@@ -139,6 +170,14 @@ void train(t_data_frame ***df) {
 	print_student_data(hufflepuff);
 	print_student_data(ravenclaw);
 	print_student_data(slytherin);
+
+    print_header_to_file(df, csv);
+    print_to_file(gryffindor, csv);
+    print_to_file(hufflepuff, csv);
+    print_to_file(ravenclaw, csv);
+    print_to_file(slytherin, csv);
+
+    fclose(csv);
 
 	free_student(gryffindor);
 	free_student(hufflepuff);
