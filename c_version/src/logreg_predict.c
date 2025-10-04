@@ -55,7 +55,7 @@ void assign_student(FILE *result, double gryffindor, double hufflepuff, double r
 
 void predict(t_data_frame ***df, t_data_frame ***avg) {
 	
-	FILE *debug = fopen("./debug_log.csv", "w");
+	FILE *debug = fopen("./debug_log", "w");
 	FILE *result = fopen("./result.csv", "w");
 
 	double gryiffindor_score = 0;
