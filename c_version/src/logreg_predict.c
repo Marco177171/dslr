@@ -32,7 +32,7 @@ void assign_student(FILE *result, double gryffindor, double hufflepuff, double r
 	double h = 100 - hufflepuff;
 	double r = 100 - ravenclaw;
 	double s = 100 - slytherin;
-	fprintf(result, "-> ");
+	// fprintf(result, "-> ");
 
 	switch (find_closest(g, h, r, s)) {
 		case 1:
@@ -69,8 +69,9 @@ void predict(t_data_frame ***df, t_data_frame ***avg) {
 	int df_i = 1, df_j = 1;
 	int h_i = 0, h_j = 1;
 
-	while (df[df_i]) {
-		fprintf(result, "\n// STUDENT: %s %s\n", df[df_i][2]->s, df[df_i][3]->s);
+	while (df[df_i] && df_i < 5) {
+		// fprintf(result, "\n// STUDENT: %s %s | index : %d \n", df[df_i][2]->s, df[df_i][3]->s, df_i);
+		fprintf(result, "%d,", df_i);
 
 		gryiffindor_score = 0;
 		hufflepuff_score = 0;
@@ -101,19 +102,19 @@ void predict(t_data_frame ***df, t_data_frame ***avg) {
 
 			if (h_i == 1) {
 				gryiffindor_score = overall_distance;
-				fprintf(result, "Gryffondor:\t%f\n", gryiffindor_score);
+				// fprintf(result, "Gryffondor:\t%f\n", gryiffindor_score);
 			}
 			else if (h_i == 2) {
 				hufflepuff_score = overall_distance;
-				fprintf(result, "Hufflepuff:\t%f\n", hufflepuff_score);
+				// fprintf(result, "Hufflepuff:\t%f\n", hufflepuff_score);
 			}
 			else if (h_i == 3) {
 				ravenclaw_score = overall_distance;
-				fprintf(result, "Ravenclaw:\t%f\n", ravenclaw_score);
+				// fprintf(result, "Ravenclaw:\t%f\n", ravenclaw_score);
 			}
 			else if (h_i == 4) {
 				slytherin_score = overall_distance;
-				fprintf(result, "Slytherin:\t%f\n", slytherin_score);
+				// fprintf(result, "Slytherin:\t%f\n", slytherin_score);
 			}
 			
 			h_i++;

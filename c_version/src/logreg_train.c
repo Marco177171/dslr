@@ -125,24 +125,26 @@ void perfect_student(t_student *student, t_data_frame ***df) {
 }
 
 void print_to_file(t_student *student, FILE *csv) {
-    int i = 0;
+    int i = 1;
     
     while (student->features[i]) {
-        fprintf(csv, "%f", student->features[i]->avg);
-        if (student->features[i+1])
-            fprintf(csv, ",");
+		fprintf(csv, "%f", student->features[i]->avg);
+		if (student->features[i + 1])
+			fprintf(csv, ",");
         i++;
     }
     fprintf(csv, "\n");
 }
 
 void print_header_to_file(t_data_frame ***df, FILE *csv) {
-    int i = 0;
+    int i = 1;
 
     while (df[0][i]) {
-        fprintf(csv, "%s", df[0][i]->s);
-        if (df[0][i+1])
-            fprintf(csv, ",");
+		if (is_valid_column(df, i)) {
+			fprintf(csv, "%s", df[0][i]->s);
+			if (df[0][i + 1])
+				fprintf(csv, ",");
+		}
         i++;
     }
     fprintf(csv, "\n");
