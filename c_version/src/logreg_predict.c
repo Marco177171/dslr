@@ -6,7 +6,6 @@ double adherence_percentage(double model, double current_value) {
 }
 
 int find_closest(double g, double h, double r, double s) {
-	
 	if (g < 0)
 		g *= -1;
 	if (h < 0)
@@ -54,7 +53,6 @@ void assign_student(FILE *result, double gryffindor, double hufflepuff, double r
 }
 
 void predict(t_data_frame ***df, t_data_frame ***avg) {
-	
 	FILE *debug = fopen("./debug_log", "w");
 	FILE *result = fopen("./result.csv", "w");
 
@@ -70,7 +68,6 @@ void predict(t_data_frame ***df, t_data_frame ***avg) {
 	int h_i = 0, h_j = 1;
 
 	while (df[df_i] && df_i < 5) {
-		// fprintf(result, "\n// STUDENT: %s %s | index : %d \n", df[df_i][2]->s, df[df_i][3]->s, df_i);
 		fprintf(result, "%d,", df_i);
 
 		gryiffindor_score = 0;
