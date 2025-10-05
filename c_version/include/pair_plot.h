@@ -1,7 +1,7 @@
-#ifndef HISTOGRAM_H
-#define HISTOGRAM_H
+#ifndef PAIR_PLOT_H
+#define PAIR_PLOT_H
 
-#include <stdlib.h>
+#include <utils.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
