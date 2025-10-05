@@ -17,7 +17,7 @@ char* predict_student(t_data_frame **student_row_std, double **all_weights, int 
         
         double z = weights_k[0]; // bias
         for (int j = 0; j < n_features; j++) {
-            z += weights_k[j + 1] * student_row_std[j + STARTING_COL]->d; 
+            z += weights_k[j + 1] * student_row_std[j + STARTING_COL]->d;
         }
 
         double probability = sigmoid(z);

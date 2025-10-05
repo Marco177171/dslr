@@ -24,7 +24,7 @@ SCATTER_PLOT_OBJS = $(SCATTER_PLOT_SRCS:.c=.o)
 
 # logreg train
 LOGREG_TRAIN = logreg_train
-LOGREG_TRAIN_SRC = $(SRC) logreg_train.c
+LOGREG_TRAIN_SRC = $(SRC) logreg_train.c batch_gradient_descent.c stochastic_gradient_descent.c mini_batch_gradient_descent.c adam_gradient_descent.c
 LOGREG_TRAIN_SRCS = $(addprefix $(SRCDIR)/, $(LOGREG_TRAIN_SRC))
 LOGREG_TRAIN_OBJS = $(LOGREG_TRAIN_SRCS:.c=.o)
 
