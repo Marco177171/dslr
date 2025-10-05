@@ -92,9 +92,9 @@ void percentiles(t_data_frame ***df, int col, double *l, double *m, double *h)
 		}
 	}
 	qsort(arr, i - 1, sizeof(double), compare);
-	int twentyfive = ((int)((double)(25.0 / 100.0) * (double)i));
-	int fifty = ((int)((double)(50.0 / 100.0) * (double)i));
-	int seventyfive = ((int)((double)(75.0 / 100.0) * (double)i));
+	int twentyfive = (double)i * 0.25;
+	int fifty = (double)i * 0.5;
+	int seventyfive = (double)i * 0.75;
 	for (int c = 0; c < i; c++) {
 		if (c == twentyfive) *l = arr[c];
 		if (c == fifty) *m = arr[c];
@@ -123,7 +123,7 @@ t_feature* get_statistics(t_data_frame ***df)
 			new->name = strdup(df[0][i]->s);
 			new->stats.count = count(df, i);
 			new->stats.mean = array_mean(df, i);
-			new->stats.std = standard_deviation(df, i, new->stats.mean);
+			new->stats.std = standard_deviation(df, new->stats.mean, i);
 			new->stats.max = find_max(df, i);
 			new->stats.min = find_min(df, i);
 			percentiles(df, i, &new->stats.twentyfive, &new->stats.fifty, &new->stats.seventyfive);

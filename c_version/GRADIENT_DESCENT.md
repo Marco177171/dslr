@@ -38,7 +38,7 @@ The core weight update for Adam (after bias correction) is:
 $$w_t \leftarrow w_{t-1} - \frac{\alpha}{\sqrt{\hat{v}_t} + \epsilon} \cdot \hat{m}_t$$
 
 Where:
-* $\alpha$ is the base learning rate (`ALPHA_RATE`).
+* $\alpha$ is the base learning rate (`LEARNING_RATE`).
 * $\hat{m}_t$ is the bias-corrected momentum (first moment).
 * $\hat{v}_t$ is the bias-corrected squared gradient average (second moment).
 * $\epsilon$ is the stability term (`EPSILON`).

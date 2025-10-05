@@ -5,6 +5,7 @@
         "describe.h": "c",
         "sdl.h": "c",
         "histogram.h": "c",
-        "data_frame.h": "c"
+        "data_frame.h": "c",
+        "ranges": "c"
     }
 }

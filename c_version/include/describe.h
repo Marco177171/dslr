@@ -6,18 +6,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <ctype.h>
 # include "data_frame.h"
 
+/*
+ * For object data (e.g. strings or timestamps),
+ * the result’s index will include count, unique, top, and freq.
+ * The top is the most common value. The freq is the most common value’s frequency.
+ * Timestamps also include the first and last items.
+*/
+
 typedef struct s_statistics {
-	int count;
-	double std;
-	double mean;
-	double min;
-	double twentyfive;
-	double fifty;
-	double seventyfive;
-	double max;
+	int 		count;
+	int			unique;
+	char		*top;	// most common value
+	int			freq; // most common value’s frequency
+	double 		std;
+	double 		mean;
+	double 		min;
+	double 		twentyfive;
+	double 		fifty;
+	double 		seventyfive;
+	double 		max;
 } t_statistics;
 
 typedef struct s_feature {
@@ -26,7 +36,23 @@ typedef struct s_feature {
 	struct s_feature 	*next;
 }	t_feature;
 
-// memory_managers.c
+typedef enum {
+	percentile,
+	include,
+	exclude,
+}	option_type;
+
+typedef enum {
+	float64,
+	datetime64,
+	string,
+}	dtype;
+
+typedef struct s_options {	
+	option_type			type;
+	char				*arg;
+}	t_options;
+
 void free_statistics(t_feature *features);
 // pinters.c
 void print_matrix_vertically(t_data_frame ***df);
@@ -40,5 +66,6 @@ double find_max(t_data_frame ***df, int col);
 double find_min(t_data_frame ***df, int col);
 void sort_column(t_data_frame ***df, int col);
 t_feature* get_statistics(t_data_frame ***df);
+int is_datetime(char *s);
 
 #endif
