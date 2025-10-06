@@ -6,6 +6,9 @@
         "sdl.h": "c",
         "histogram.h": "c",
         "data_frame.h": "c",
-        "ranges": "c"
+        "ranges": "c",
+        "chrono": "c",
+        "random": "c",
+        "limits": "c"
     }
 }

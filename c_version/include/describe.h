@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 # include "data_frame.h"
 
 /*
@@ -16,22 +15,39 @@
  * Timestamps also include the first and last items.
 */
 
+typedef struct s_percentile {
+	int 				len;
+	double 				*percentage;
+	union {
+		char			**s;
+		double 			*d;
+	};
+}	t_percentile;
+
 typedef struct s_statistics {
-	int 		count;
-	int			unique;
-	char		*top;	// most common value
-	int			freq; // most common value’s frequency
-	double 		std;
-	double 		mean;
-	double 		min;
-	double 		twentyfive;
-	double 		fifty;
-	double 		seventyfive;
-	double 		max;
+	int					unique; // number of unique values. NaN for numbers
+	char				*top;	// most common value. NaN for numbers
+	int					freq; // most common value’s frequency. NaN for numbers
+	double 				std;
+	double 				mean;
+	double 				min;
+	t_percentile		*percentiles;
+	double 				max;
 } t_statistics;
+
+// typedef struct s_stats_mask {
+// 	char count		: 1;
+// 	char unique		: 1;
+// 	char top		: 1;
+// 	char freq		: 1;
+// 	char std		: 1;
+
+// }	t_stats_mask;
 
 typedef struct s_feature {
 	char 				*name;
+	dtype				type;
+	int					count;
 	t_statistics		stats;
 	struct s_feature 	*next;
 }	t_feature;
@@ -42,16 +58,10 @@ typedef enum {
 	exclude,
 }	option_type;
 
-typedef enum {
-	float64,
-	datetime64,
-	string,
-}	dtype;
-
-typedef struct s_options {	
+typedef struct s_option {	
 	option_type			type;
 	char				*arg;
-}	t_options;
+}	t_option;
 
 void free_statistics(t_feature *features);
 // pinters.c
@@ -64,8 +74,6 @@ double array_mean(t_data_frame ***df, int col);
 double standard_deviation(t_data_frame ***df, double mean, int col);
 double find_max(t_data_frame ***df, int col);
 double find_min(t_data_frame ***df, int col);
-void sort_column(t_data_frame ***df, int col);
-t_feature* get_statistics(t_data_frame ***df);
-int is_datetime(char *s);
+t_feature* get_statistics(t_data_frame ***df, t_option options[3]);
 
 #endif

@@ -11,6 +11,9 @@ t_data_frame **load_df(char *s, char limit_char);
 
 int is_valid(char *s);
 int is_number(char *s);
+int is_date(char *s);
 int is_valid_column(t_data_frame ***df, int col);
+dtype get_column_type(t_data_frame ***df, int col);
+int date_to_ms(char *s);
 
 #endif
