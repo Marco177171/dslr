@@ -4,7 +4,7 @@
 
 void divide_window(SDL_Renderer *renderer, int section_width, int section_height, int w_width, int w_height) {
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255); // set color
-
+	
 	// vertical lines
 	int i = 0;
 	while (i <= w_width) {
