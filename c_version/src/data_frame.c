@@ -23,7 +23,8 @@ void free_data_frame(t_data_frame*** df)
 	if (!df) return;
 	while (df[c]) {
 		for (int i = 0; df[c][i]; i++) {
-			if (df[c][i]->valid && df[c][i]->type == STRING) {
+			if ((df[c][i]->valid && df[c][i]->type == STRING)
+				|| (df[c][i]->valid && df[c][i]->type == DATE)) {
 				free(df[c][i]->s);
 			}
 			if (df[c][i]) free(df[c][i]);

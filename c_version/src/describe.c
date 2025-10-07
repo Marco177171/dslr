@@ -1,5 +1,6 @@
 #include <describe.h>
 #include <data_frame.h>
+#include <utils.h>
 
 const char *info = "\
 Usage: predict [OPTIONS]... [FILE.csv]...\n\
@@ -19,30 +20,59 @@ options:\n\
                    - a list-like of dtypes: limits the result to the provided data types.\n\
                    Valid values are: 'numeric', 'datetime', 'string'.\n";
 
-void parse_options(t_option options[static 3], char **argv) {
+static char** validate_options(char *param)
+{
+	if (param[0] != '[' || param[strlen(param) - 1] != ']') {
+		fprintf(stderr, "error: invalid parameter: %s\n", param);
+		return NULL;
+	}
+	param[strlen(param)] = 0;
+	param++;
+	return split(param, ',');
+}
+
+void free_options(t_option options[static 3])
+{
+	for (int i = 0; i < OPTIONS_COUNT; i++) {
+		if (options[i].arg) {
+			int j = 0;
+			while (options[i].arg[j]) {
+				free(options[i].arg[j]);
+				j++;
+			}
+			free(options[i].arg);
+		}
+	}
+}
+
+int parse_options(t_option options[static 3], char **argv) {
 	int i = 0;
 	while (argv[i]) {
 		if (argv[i][0] == '-') {
 			if (argv[i][1] == '-') {
-				if (!strncmp(argv[i], "--percentile=", 13)) options[0].arg = strdup(argv[i] + 13);
-				else if (!strncmp(argv[i], "--include=", 10)) options[1].arg = strdup(argv[i] + 10);
-				else if (!strncmp(argv[i], "--exclude=", 10)) options[2].arg = strdup(argv[i] + 10);
-				else {
+				if (!strncmp(argv[i], "--percentile=", 13)) {
+					if ((options[PERCENTILE].arg = validate_options(argv[i] + 13)) == NULL) return 1;
+				} else if (!strncmp(argv[i], "--include=", 10)) {
+					if ((options[INCLUDE].arg = validate_options(argv[i] + 10)) == NULL) return 1;
+				} else if (!strncmp(argv[i], "--exclude=", 10)) {
+					if ((options[EXCLUDE].arg = validate_options(argv[i] + 10)) == NULL) return 1;
+				} else {
 					fprintf(stderr, "error: invalid option: %s\n", argv[i]);
-					exit(1);
+					return 1;
 				}
 			} else {
 				switch (argv[i][1])
 				{
-				case 'p': options[0].arg = strdup(argv[i] + 3); break;
-				case 'i': options[1].arg = strdup(argv[i] + 3); break;
-				case 'e': options[2].arg = strdup(argv[i] + 3); break;
-				default: fprintf(stderr, "error: invalid option: %s\n", argv[i]); exit(1);
+				case 'p': if ((options[PERCENTILE].arg = validate_options(argv[i] + 3)) == NULL) return 1; break;
+				case 'i': if ((options[INCLUDE].arg = validate_options(argv[i] + 3)) == NULL) return 1; break;
+				case 'e': if ((options[EXCLUDE].arg = validate_options(argv[i] + 3)) == NULL) return 1; break;
+				default: fprintf(stderr, "error: invalid option: %s\n", argv[i]); return 1; break;
 				}
 			}
 		}
 		i++;
 	}
+	return 0;
 }
 
 static void print_percentiles(t_percentile *percentiles, dtype type)
@@ -67,9 +97,11 @@ static void print_numeric(t_statistics stats, dtype type)
 	if (type == DOUBLE || type == DATE) {
 		printf("mean: %f\n", stats.mean);
 		printf("std: %f\n", stats.std);
-		printf("min: %f\n", stats.min);
+		if (type == DATE) printf("min: %s\n", stats.min.s);
+		else printf("min: %f\n", stats.min.d);
 		print_percentiles(stats.percentiles, type);
-		printf("max: %f\n", stats.max);
+		if (type == DATE) printf("max: %s\n", stats.max.s);
+		else printf("max: %f\n", stats.max.d);
 	} else {
 		printf("mean: %s\n", "NaN");
 		printf("std: %s\n", "NaN");
@@ -99,8 +131,13 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	t_option options[3] = {{.type=percentile}, {.type=include}, {.type=exclude}};
-	parse_options(options, argv);
+	t_option options[3] = {{.type=PERCENTILE}, {.type=INCLUDE}, {.type=EXCLUDE}};
+	int err = parse_options(options, argv);
+	if (err) {
+		free_options(options);
+		return 1;
+	}
+
 	t_data_frame ***df = get_data_frame(argv[1]);
 
 	if(df) {
@@ -108,18 +145,18 @@ int main(int argc, char **argv) {
 		if (features) {
 			t_feature *cpy = features;
 			while (cpy) {
-				if (options[include].arg) {
+				if (options[INCLUDE].arg) {
 					printf("\n---------------\n");
 					printf("%s\n", cpy->name);
 					printf("count: %d\n", cpy->count);
-					if (!strcmp(options[include].arg, "all")) {
+					if (include_option(options[INCLUDE].arg, "all")) {
 						print_string(cpy->stats, cpy->type);
 						print_numeric(cpy->stats, cpy->type);
 					}
-					else if (!strcmp(options[include].arg, "numeric") && cpy->type == DOUBLE) print_numeric(cpy->stats, cpy->type);
-					else if (!strcmp(options[include].arg, "string") && cpy->type == STRING) {
+					else if (include_option(options[INCLUDE].arg, "numeric") && cpy->type == DOUBLE) print_numeric(cpy->stats, cpy->type);
+					else if (include_option(options[INCLUDE].arg, "string") && cpy->type == STRING) {
 						print_string(cpy->stats, cpy->type);
-					} else if (!strcmp(options[include].arg, "datetime") && cpy->type == DATE) {
+					} else if (include_option(options[INCLUDE].arg, "datetime") && cpy->type == DATE) {
 						print_numeric(cpy->stats, cpy->type);
 					}
 				} else {
@@ -128,18 +165,16 @@ int main(int argc, char **argv) {
 					printf("count: %d\n", cpy->count);
 					printf("mean: %f\n", cpy->stats.mean);
 					printf("std: %f\n", cpy->stats.std);
-					printf("min: %f\n", cpy->stats.min);
+					printf("min: %f\n", cpy->stats.min.d);
 					print_percentiles(cpy->stats.percentiles, cpy->type);
-					printf("max: %f\n", cpy->stats.max);
+					printf("max: %f\n", cpy->stats.max.d);
 				}
 				cpy = cpy->next;
 			}
 		}
+		free_options(options);
 		free_statistics(features);
 		free_data_frame(df);
-	}
-	for (int i = 0; i < 3; i++) {
-		if (options[i].arg) free(options[i].arg);
 	}
 	return 0;
 }

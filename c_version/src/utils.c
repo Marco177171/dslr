@@ -3,18 +3,14 @@
 #include <string.h>
 #include <time.h>
 
-int date_to_ms(char *s)
+int include_option(char **arr, char *opt)
 {
-	struct tm t;
-
-	t.tm_year = atoi(substring(s, 0, 4));
-	t.tm_mon = atoi(substring(s, 5, 7));
-	t.tm_mday = atoi(substring(s, 8, 10));
-	t.tm_hour = 0;
-	t.tm_min = 0;
-	t.tm_sec = 0;
-
-	return mktime(&t) * 1000;
+	int i = 0;
+	while (*arr) {
+		if (!strcmp(arr[i], opt)) return 1;
+		arr++;
+	}
+	return 0;
 }
 
 int is_valid(char *s)

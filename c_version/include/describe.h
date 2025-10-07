@@ -30,19 +30,16 @@ typedef struct s_statistics {
 	int					freq; // most common value’s frequency. NaN for numbers
 	double 				std;
 	double 				mean;
-	double 				min;
+	union {
+		char			*s;
+		double 			d;
+	}	min;
 	t_percentile		*percentiles;
-	double 				max;
+	union {
+		char			*s;
+		double 			d;
+	}	max;
 } t_statistics;
-
-// typedef struct s_stats_mask {
-// 	char count		: 1;
-// 	char unique		: 1;
-// 	char top		: 1;
-// 	char freq		: 1;
-// 	char std		: 1;
-
-// }	t_stats_mask;
 
 typedef struct s_feature {
 	char 				*name;
@@ -53,14 +50,15 @@ typedef struct s_feature {
 }	t_feature;
 
 typedef enum {
-	percentile,
-	include,
-	exclude,
+	PERCENTILE,
+	INCLUDE,
+	EXCLUDE,
+	OPTIONS_COUNT
 }	option_type;
 
 typedef struct s_option {	
 	option_type			type;
-	char				*arg;
+	char				**arg;
 }	t_option;
 
 void free_statistics(t_feature *features);
