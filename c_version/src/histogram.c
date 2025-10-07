@@ -14,7 +14,7 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 	int i = origin_x;
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
 
-	int p = 1;
+	int p = 0;
 	char value[16];
 
 	while (i <= w_width) {
@@ -22,16 +22,16 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 		SDL_RenderDebugText(renderer, i + 10, 30, value);
 		SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
 		i += f1_unit;
-		p *= 10;
+		p += 1;
 	}
 	i = origin_x;
-	p = 1;
+	p = 0;
 	while (i >= 0) {
 		sprintf(value, "%d", p);
 		SDL_RenderDebugText(renderer, i + 10, 30, value);
 	    SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
 		i -= f1_unit;
-		p *= 10;
+		p += 1;
 	}
 
     // // draw horizontal lines
