@@ -20,22 +20,36 @@ void divide_window(SDL_Renderer *renderer, int section_width, int section_height
 }
 
 void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
+	// int count,
+	// int w_width, int w_height,
 	int i, int j,
 	int row, int col,
 	int section_width, int section_height) {
 
-	int min = (int)find_min(df, j);
-	int max = (int)find_max(df, j);
-	int ext = (int)(max - min);
-	
-	int x = row * section_width;
-	int y = col * section_height;
-	int end_x = x + section_width;
-	int end_y = y + section_height;
+	int min_i = find_min(df, i);
+	int max_i = find_max(df, i);
+	int ext_i = max_i - min_i; // estensione massima della colonna i
 
-	// double x_offset = df[i][j]->d;
-	// double y_offset = df[i][j]->d;
-	while (df[i][j] && j < 2) {
+	int min_j = find_min(df, j);
+	int max_j = find_max(df, j);
+	int ext_j = max_j - min_j; // estensione massima della colonna j
+	
+	int start_x = col * section_width;
+	int start_y = row * section_height;
+
+	int px = 0;
+	int x_off = 0;
+	int py = 0;
+	int y_off = 0;
+
+	int index = 1;
+	while (df[index]) {
+		x_off = (int)(section_width / ext_i) * (int)(df[index][i]->d);
+		y_off = (int)(section_height / ext_j) * (int)(df[index][j]->d);
+
+		px = start_x + x_off;
+		py = start_y + y_off;
+
 		if (!strcmp(df[i][1]->s, "Gryffindor"))
 			SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
 		else if (!strcmp(df[i][1]->s, "Hufflepuff"))
@@ -44,11 +58,9 @@ void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		else if (!strcmp(df[i][1]->s, "Slytherin"))
 			SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
-
-		// right operations, but too heavy
-		int px = x + (int)((end_x - x) / ext * df[i][j]->d);
-		int py = y + (int)((end_y - y) / ext * df[i][j]->d);
+		
 		SDL_RenderPoint(renderer, px, py);
+		index++;
 	}
 }
 
@@ -59,7 +71,7 @@ void pair_plot(t_data_frame ***df) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s", SDL_GetError());
 		return ;
 	}
-	window = SDL_CreateWindow("Pair Plot", 640, 480, SDL_WINDOW_FULLSCREEN);
+	window = SDL_CreateWindow("Pair Plot", 720, 480, SDL_WINDOW_FULLSCREEN);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
 	SDL_SyncWindow(window);
 
@@ -95,7 +107,9 @@ void pair_plot(t_data_frame ***df) {
 			while (df[0][j] && j < 2) {
 				if (is_valid_column(df, j)) {
 					printf("i %d j %d row %d col %d \n", i, j, row, col);
-					draw_pair_in_window(renderer, df,
+					draw_pair_in_window(renderer, df, 
+						// count,
+						// w_width, w_height,
 						i, j,
 						row, col,
 						section_width, section_height);

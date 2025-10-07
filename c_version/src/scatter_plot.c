@@ -87,7 +87,7 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL: %s", SDL_GetError());
 		return ;
 	}
-	window = SDL_CreateWindow("Scatter Plot", 640, 480, SDL_WINDOW_FULLSCREEN);
+	window = SDL_CreateWindow("Scatter Plot", 720, 480, SDL_WINDOW_FULLSCREEN);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
 	SDL_SyncWindow(window);
 	
