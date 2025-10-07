@@ -20,8 +20,6 @@ void divide_window(SDL_Renderer *renderer, int section_width, int section_height
 }
 
 void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
-	// int count,
-	// int w_width, int w_height,
 	int i, int j,
 	int row, int col,
 	int section_width, int section_height) {
@@ -44,8 +42,8 @@ void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 
 	int index = 1;
 	while (df[index]) {
-		x_off = (int)(section_width / ext_i) * (int)(df[index][i]->d);
-		y_off = (int)(section_height / ext_j) * (int)(df[index][j]->d);
+		x_off = (int)(section_width / ext_i) + (int)(df[index][i]->d);
+		y_off = (int)(section_height / ext_j) + (int)(df[index][j]->d);
 
 		px = start_x + x_off;
 		py = start_y + y_off;
@@ -87,7 +85,6 @@ void pair_plot(t_data_frame ***df) {
 			count++;
 		i++;
 	}
-	printf("%d valid columns counted\n", count);
 	int section_width = (int)(w_width / count);
 	int section_height = (int)(w_height / count);
 	// draw sections in the window
@@ -106,10 +103,7 @@ void pair_plot(t_data_frame ***df) {
 			j = 0;
 			while (df[0][j] && j < 2) {
 				if (is_valid_column(df, j)) {
-					printf("i %d j %d row %d col %d \n", i, j, row, col);
 					draw_pair_in_window(renderer, df, 
-						// count,
-						// w_width, w_height,
 						i, j,
 						row, col,
 						section_width, section_height);
