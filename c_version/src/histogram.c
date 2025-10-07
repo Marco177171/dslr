@@ -1,23 +1,27 @@
 #include <data_frame.h>
 #include <histogram.h>
 #include <describe.h>
+#include <stdlib.h>
 
 void draw_grid_from_origin(SDL_Renderer *renderer, 
 	int origin_x, int origin_y,
 	double f1_unit, double f2_unit,
 	int w_width, int w_height) {
-	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
-    
+		
 	(void)f2_unit;
 	(void) origin_y;
-    // draw vertical lines
-	int i = origin_x + f1_unit;
+	// draw vertical lines
+	int i = origin_x;
+	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
+	// char value[16];
 	while (i <= w_width) {
+		SDL_RenderDebugText(renderer, i + 10, 30, "0");
 		SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
 		i += f1_unit;
 	}
 	i = origin_x - f1_unit;
 	while (i >= 0) {
+		SDL_RenderDebugText(renderer, i + 10, 30, "0");
 	    SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
 		i -= f1_unit;
 	}
@@ -115,7 +119,12 @@ void visualize_data(t_data_frame*** df, int col) {
 	int origin_x = abs((int)(min * width_unit));
 	int origin_y = max * height_unit;
 
-	draw_grid_from_origin(renderer, origin_x, origin_y, width_unit, height_unit, w_width, w_height);
+	draw_grid_from_origin(renderer, 
+		origin_x, origin_y, 
+		width_unit, height_unit, 
+		w_width, w_height);
+	
+	SDL_RenderDebugText(renderer, 10, 10, df[0][col]->s);
 
 	int gryffindor = 0;
 	int hufflepuff = 0;
@@ -169,7 +178,6 @@ void visualize_data(t_data_frame*** df, int col) {
 				break;
 		}
 	}
-
 	printf("MIN : %f | MAX : %f\n", min, max);
 }
 

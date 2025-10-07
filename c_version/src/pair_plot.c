@@ -32,30 +32,23 @@ void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 	int y = col * section_height;
 	int end_x = x + section_width;
 	int end_y = y + section_height;
-	
-	// SDL_SetRenderDrawColor(renderer, 255, 35, 35, 255); // set color
-	
-	// SDL_RenderLine(renderer, x, y, end_x, y); // horizontal
-	// SDL_RenderLine(renderer, x, y, x, end_y); // vertical
 
 	// double x_offset = df[i][j]->d;
 	// double y_offset = df[i][j]->d;
-	while (df[i][j]) {
+	while (df[i][j] && j < 2) {
 		if (!strcmp(df[i][1]->s, "Gryffindor"))
-		SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
+			SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
 		else if (!strcmp(df[i][1]->s, "Hufflepuff"))
-		SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255);
+			SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255);
 		else if (!strcmp(df[i][1]->s, "Ravenclaw"))
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		else if (!strcmp(df[i][1]->s, "Slytherin"))
-		SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
+			SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
 
 		// right operations, but too heavy
 		int px = x + (int)((end_x - x) / ext * df[i][j]->d);
 		int py = y + (int)((end_y - y) / ext * df[i][j]->d);
-		SDL_RenderPoint(renderer, 
-			px, 
-			py);
+		SDL_RenderPoint(renderer, px, py);
 	}
 }
 
@@ -99,7 +92,7 @@ void pair_plot(t_data_frame ***df) {
 			col = 0;
 			// crea un ciclo contro tutte le altre valide
 			j = 0;
-			while (df[0][j]) {
+			while (df[0][j] && j < 2) {
 				if (is_valid_column(df, j)) {
 					printf("i %d j %d row %d col %d \n", i, j, row, col);
 					draw_pair_in_window(renderer, df,

@@ -19,30 +19,30 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 	int w_width, int w_height) {
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
 	
-	int i = f1_origin + 1;
+	int i = f1_origin;
 	while (i <= w_width) {
-		if ((i - f1_origin) % (int)(f1_unit) == 0)
-			SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
-		i++;
+		SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
+		SDL_RenderDebugText(renderer, i + 10, 10, "0");
+		i += f1_unit;
 	}
-	i = f1_origin - 1;
+	i = f1_origin;
 	while (i >= 0) {
-		if ((i - f1_origin) % (int)(f1_unit) == 0)
-			SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
-		i--;
+		SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
+		SDL_RenderDebugText(renderer, i + 10, 10, "0");
+		i -= f1_unit;
 	}
 
-	i = f2_origin + 1;
+	i = f2_origin;
 	while (i <= w_height) {
-		if ((i - f2_origin) % (int)(f2_unit) == 0)
-			SDL_RenderLine(renderer, 0, i, w_width, i); // y negative axis
-		i++;
+		SDL_RenderLine(renderer, 0, i, w_width, i); // y negative axis
+		SDL_RenderDebugText(renderer, 10, i + 10, "0");
+		i += f2_unit;
 	}
-	i = f2_origin - 1;
+	i = f2_origin;
 	while (i >= 0) {
-		if ((i - f2_origin) % (int)(f2_unit) == 0)
-			SDL_RenderLine(renderer, 0, i, w_width, i); // y positive axis
-		i--;
+		SDL_RenderLine(renderer, 0, i, w_width, i); // y positive axis
+		SDL_RenderDebugText(renderer, 10, i + 10, "0");
+		i -= f2_unit;
 	}
 	
 	SDL_RenderLine(renderer, 0, f2_origin, w_width, f2_origin); // y axis
@@ -106,6 +106,10 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 
 	draw_grid_from_origin(renderer, f1_origin, f2_origin, f_one_unit, f_two_unit, w_width, w_height);
 	draw_origin(renderer, f1_origin, f2_origin, w_width, w_height);
+	
+	SDL_RenderDebugText(renderer, 10, 10, df[0][feat_1]->s); // write features to screen
+	SDL_RenderDebugText(renderer, 10, 30, df[0][feat_2]->s);
+
 	draw_points(renderer, df, feat_1, feat_2, f_one_unit, f_two_unit, f1_origin, f2_origin);
 	SDL_RenderPresent(renderer);
 
