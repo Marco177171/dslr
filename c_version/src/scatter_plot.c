@@ -18,31 +18,45 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 	double f1_unit, double f2_unit,
 	int w_width, int w_height) {
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
+
+	char value[32];
+	int p = 1;
 	
 	int i = f1_origin;
 	while (i <= w_width) {
 		SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
-		SDL_RenderDebugText(renderer, i + 10, 10, "0");
+		sprintf(value, "%d", p);
+		SDL_RenderDebugText(renderer, i + 10, 10, value);
 		i += f1_unit;
+		p *= 10;
 	}
 	i = f1_origin;
+	p = 1;
 	while (i >= 0) {
 		SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
-		SDL_RenderDebugText(renderer, i + 10, 10, "0");
+		sprintf(value, "%d", p);
+		SDL_RenderDebugText(renderer, i + 10, 10, value);
 		i -= f1_unit;
+		p *= 10;
 	}
 
 	i = f2_origin;
+	p = 1;
 	while (i <= w_height) {
 		SDL_RenderLine(renderer, 0, i, w_width, i); // y negative axis
-		SDL_RenderDebugText(renderer, 10, i + 10, "0");
+		sprintf(value, "%d", p);
+		SDL_RenderDebugText(renderer, 10, i + 10, value);
 		i += f2_unit;
+		p *= 10;
 	}
 	i = f2_origin;
+	p = 1;
 	while (i >= 0) {
 		SDL_RenderLine(renderer, 0, i, w_width, i); // y positive axis
-		SDL_RenderDebugText(renderer, 10, i + 10, "0");
+		sprintf(value, "%d", p);
+		SDL_RenderDebugText(renderer, 10, i + 10, value);
 		i -= f2_unit;
+		p *= 10;
 	}
 	
 	SDL_RenderLine(renderer, 0, f2_origin, w_width, f2_origin); // y axis

@@ -13,17 +13,25 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 	// draw vertical lines
 	int i = origin_x;
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255);
-	// char value[16];
+
+	int p = 1;
+	char value[16];
+
 	while (i <= w_width) {
-		SDL_RenderDebugText(renderer, i + 10, 30, "0");
+		sprintf(value, "%d", p);
+		SDL_RenderDebugText(renderer, i + 10, 30, value);
 		SDL_RenderLine(renderer, i, 0, i, w_height); // x negative axis
 		i += f1_unit;
+		p *= 10;
 	}
-	i = origin_x - f1_unit;
+	i = origin_x;
+	p = 1;
 	while (i >= 0) {
-		SDL_RenderDebugText(renderer, i + 10, 30, "0");
+		sprintf(value, "%d", p);
+		SDL_RenderDebugText(renderer, i + 10, 30, value);
 	    SDL_RenderLine(renderer, i, 0, i, w_height); // x positive axis
 		i -= f1_unit;
+		p *= 10;
 	}
 
     // // draw horizontal lines
