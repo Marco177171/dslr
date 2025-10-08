@@ -2,6 +2,13 @@
 #include <scatter_plot.h>
 #include <describe.h>
 
+// void print_text(SDL_Renderer *renderer, int x, int y, char *text) {
+// 	while(*text) {
+
+// 		text++;
+// 	}
+// }
+
 void define_color(char *hogwarts_house, SDL_Renderer *renderer) {
 	if (!strcmp(hogwarts_house, "Gryffindor"))
 		SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
@@ -125,6 +132,11 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 	SDL_RenderDebugText(renderer, 10, 30, df[0][feat_2]->s);
 
 	draw_points(renderer, df, feat_1, feat_2, f_one_unit, f_two_unit, f1_origin, f2_origin);
+	SDL_RenderDebugText(renderer, w_width / 20, w_height - (w_height / 20), df[0][feat_1]->s);
+	SDL_RenderDebugText(renderer, w_width / 20, w_height / 20, df[0][feat_2]->s);
+	SDL_SetRenderDrawColor(renderer, 127, 127, 127, 255);
+	SDL_RenderLine(renderer, w_width / 22, 0, w_width / 22, w_height); // vertical
+	SDL_RenderLine(renderer, 0, w_height - (w_height / 18), w_width, w_height - (w_height / 18)); // horizontal
 	SDL_RenderPresent(renderer);
 
 	SDL_Event event;
@@ -134,16 +146,18 @@ void visualize_scatter_plot(t_data_frame*** df, int feat_1, int feat_2) {
 		switch (event.type)
 		{
 			case (SDL_EVENT_MOUSE_BUTTON_DOWN):
-				SDL_DestroyWindow(window);
-				SDL_Quit();
 				running = false;
 				break;
-			
+			case SDL_EVENT_KEY_DOWN:
+				if (event.key.scancode == SDL_SCANCODE_ESCAPE) running = false;
+				break;
 			default:
 				break;
 		}
 	}
 	
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 	printf("1: MIN : %f | MAX : %f\n", min_1, max_1);
 	printf("2: MIN : %f | MAX : %f\n", min_2, max_2);
 }

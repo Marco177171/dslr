@@ -3,12 +3,14 @@
 
 typedef enum {
 	DOUBLE,
-	STRING
-}	e_type;
+	STRING,
+	DATE,
+	OBJECT
+}	dtype;
 
 typedef struct s_data_frame {
 	int		valid;
-	e_type	type;
+	dtype	type;
 	union {
 		double d;
 		char *s;

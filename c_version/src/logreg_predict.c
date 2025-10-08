@@ -1,138 +1,90 @@
-#include "../include/utils.h"
-#include "../include/data_frame.h"
+#include <data_frame.h>
+#include <describe.h>
+#include <logreg_train.h>
+#include <math.h>
 
-double adherence_percentage(double model, double current_value) {
-	return ((current_value * 100) / model);
+double sigmoid(double z) {
+    return 1.0 / (1.0 + exp(-z));
 }
 
-int find_closest(double g, double h, double r, double s) {
-	if (g < 0)
-		g *= -1;
-	if (h < 0)
-		h *= -1;
-	if (r < 0)
-		r *= -1;
-	if (s < 0)
-		s *= -1;
-	
-	if (g < h && g < r && g < s)
-		return 1;
-	else if (h < g && h < r && h < s)
-		return 2;
-	else if (r < g && r < h && r < s)
-		return 3;
-	else if (s < g && s < h && s < r)
-		return 3;
-	return 0;
+char* predict_student(t_data_frame **student_row_std, double **all_weights, int n_features) {
+    char  *houses[] = {"Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"};
+    double max_prob = -1.0;
+    char *predicted_house = NULL;
+
+    for (int k = 0; k < NUM_HOUSES; k++) {
+        double *weights_k = all_weights[k];
+        
+        double z = weights_k[0]; // bias
+        for (int j = 0; j < n_features; j++) {
+            z += weights_k[j + 1] * student_row_std[j + STARTING_COL]->d;
+        }
+
+        double probability = sigmoid(z);
+        
+        if (probability > max_prob) {
+            max_prob = probability;
+            predicted_house = houses[k];
+        }
+    }
+
+    return predicted_house;
 }
 
-void assign_student(FILE *result, double gryffindor, double hufflepuff, double ravenclaw, double slytherin) {
-	double g = 100 - gryffindor;
-	double h = 100 - hufflepuff;
-	double r = 100 - ravenclaw;
-	double s = 100 - slytherin;
-	// fprintf(result, "-> ");
-
-	switch (find_closest(g, h, r, s)) {
-		case 1:
-			fprintf(result, "Gryffindor\n");
-			break;
-		case 2:
-			fprintf(result, "Hufflepuff\n");
-			break;
-		case 3:
-			fprintf(result, "Ravenclaw\n");
-			break;
-		case 4:
-			fprintf(result, "Slytherin\n");
-			break;
-		default:
-			return ;
-	}
-	return ;
+void extract_data(t_train_data *data, t_data_frame ***weights_df, int n_features, double **weights) {
+    for (int j = 0; j < n_features; j++) {
+        data[j].mean = weights_df[1][j + 2]->d;
+        data[j].standard_deviation = weights_df[2][j + 2]->d;
+    }
+    
+    for (int j = 0; j < 4; j++) {
+        weights[j] = malloc(sizeof(double) * n_features + 1);
+        for (int i = 0; i <= n_features; i++) {
+            weights[j][i] = weights_df[3 + j][i + 1]->d;
+        }
+    }
 }
 
-void predict(t_data_frame ***df, t_data_frame ***avg) {
-	FILE *debug = fopen("./debug_log", "w");
-	FILE *result = fopen("./result.csv", "w");
+void normalize_students(t_data_frame*** df, int n_features, t_train_data *data) {
 
-	double gryiffindor_score = 0;
-	double hufflepuff_score = 0;
-	double ravenclaw_score = 0;
-	double slytherin_score = 0;
-
-	double adherence = 0;
-	double overall_distance = 0, distance_percentage = 0;
-
-	int df_i = 1, df_j = 1;
-	int h_i = 0, h_j = 1;
-
-	while (df[df_i] && df_i < 5) {
-		fprintf(result, "%d,", df_i);
-
-		gryiffindor_score = 0;
-		hufflepuff_score = 0;
-		ravenclaw_score = 0;
-		slytherin_score = 0;
-
-		h_i = 1;
-		while (h_i <= 4) {
-			df_j = 1;
-			h_j = 1;
-			adherence = 0;
-			overall_distance = 0;
-			while (df[df_i][df_j] && avg[h_i][df_j]) {
-				if (is_valid_column(df, df_j)) {
-					// deviazione tra il punteggio dello studente e punteggio medio della casa.
-					fprintf(debug, "h : %d | %s / %s\n", h_i, df[0][df_j]->s, avg[0][df_j]->s);
-					fprintf(debug, "avg: %f | stundent: %f\n", avg[h_i][df_j]->d, df[df_i][df_j]->d);
-					adherence = adherence_percentage(avg[h_i][df_j]->d, df[df_i][df_j]->d);
-					distance_percentage = 100 - adherence;
-					overall_distance += distance_percentage;
-					fprintf(debug, "adherence: %f %%\n", adherence);
-					fprintf(debug, "\n");
-					h_j++;
-				}
-				df_j++;
-			}
-			overall_distance /= h_j;
-
-			if (h_i == 1) {
-				gryiffindor_score = overall_distance;
-				// fprintf(result, "Gryffondor:\t%f\n", gryiffindor_score);
-			}
-			else if (h_i == 2) {
-				hufflepuff_score = overall_distance;
-				// fprintf(result, "Hufflepuff:\t%f\n", hufflepuff_score);
-			}
-			else if (h_i == 3) {
-				ravenclaw_score = overall_distance;
-				// fprintf(result, "Ravenclaw:\t%f\n", ravenclaw_score);
-			}
-			else if (h_i == 4) {
-				slytherin_score = overall_distance;
-				// fprintf(result, "Slytherin:\t%f\n", slytherin_score);
-			}
-			
-			h_i++;
-		}
-		assign_student(result, gryiffindor_score, hufflepuff_score, ravenclaw_score, slytherin_score);
-		df_i++;
-	}
+    for (int i = 0; i < n_features; i++) {
+        double mean = data[i].mean;
+        double sigma = data[i].standard_deviation;
+        for (int k = 1; df[k]; k++) {
+            if (!df[k][i + STARTING_COL]->valid) {
+                df[k][i + STARTING_COL]->valid = 1;
+                df[k][i + STARTING_COL]->type = DOUBLE;
+                df[k][i + STARTING_COL]->d = mean;
+            }
+            if (sigma > 1e-6) { // don't divide by 0
+                df[k][i + STARTING_COL]->d = (df[k][i + STARTING_COL]->d - mean) / sigma;
+            }
+        }
+    }
 }
 
-int main(int argc, char **argv) {
-	
-	if (argc != 3) {
-		perror("ERROR: usage: ./logreg_predict *csv_to_complete* *averages_csv_file*");
-		exit(EXIT_FAILURE);
-	}
-	
-	t_data_frame ***df = get_data_frame(argv[1]);
-	t_data_frame ***avg = get_data_frame(argv[2]);
-	predict(df, avg);
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        perror("Wrong number of arguments. Usage: logreg_predict <data_set.csv> <weights.csv>");
+        exit(EXIT_FAILURE);
+    }
+    int n_features = (ENDING_COL - STARTING_COL) + 1;
+    t_data_frame*** test = get_data_frame(argv[1]);
+    t_data_frame*** weights_df = get_data_frame(argv[2]);
+    t_train_data *data = malloc(sizeof(t_train_data) * n_features);
+    double **weights = malloc(sizeof(double *) * 4);
 
-	free_data_frame(df);
-	free_data_frame(avg);
-	return 0;
+    extract_data(data, weights_df, n_features, weights);
+    normalize_students(test, n_features, data);
+    FILE *fp = fopen("houses.csv", "w");
+    fprintf(fp, "Index,Hogwars House\n");
+
+    for (int i = 1; test[i]; i++) {
+        char *predicted_house = predict_student(test[i], weights, n_features);
+        fprintf(fp, "%d,%s\n", i - 1, predicted_house);
+    }
+
+    free_data_frame(test);
+    free_data_frame(weights_df);
+    free(data);
 }

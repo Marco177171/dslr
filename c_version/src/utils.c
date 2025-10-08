@@ -1,8 +1,28 @@
 #include <utils.h>
+#include <ctype.h>
+#include <string.h>
+#include <time.h>
+
+int include_option(char **arr, char *opt)
+{
+	int i = 0;
+	while (*arr) {
+		if (!strcmp(arr[i], opt)) return 1;
+		arr++;
+	}
+	return 0;
+}
 
 int is_valid(char *s)
 {
 	return s[0] != 0;
+}
+
+int is_date(char *s) {
+	if (strlen(s) != 10) return 0;
+	if (s[4] != '-' || s[7] != '-') return 0;
+	return (isdigit(s[0]) && isdigit(s[1]) && isdigit(s[2]) && isdigit(s[3]) &&
+			isdigit(s[5]) && isdigit(s[6]) && isdigit(s[8]) && isdigit(s[9]));
 }
 
 int is_number(char *s)
@@ -18,6 +38,17 @@ int is_number(char *s)
 		}
 	}
 	return s != NULL;
+}
+
+dtype get_column_type(t_data_frame ***df, int col)
+{
+	dtype t = df[1][col]->type;
+	
+	for (int i = 1; df[i]; i++) {
+		if (df[i][col]->valid && df[i][col]->type != t)
+			return OBJECT;
+	}
+	return t;
 }
 
 int is_valid_column(t_data_frame ***df, int col)
@@ -58,12 +89,12 @@ char **split(char *s, char limit_char) {
 		i++;
 	}
 	limit_count++;
-	r = malloc(sizeof(char*) * limit_count + 1);
-	r[limit_count] = NULL;
+	r = calloc(limit_count + 1, sizeof(char*));
 	if (!r) {
 		perror("Malloc error for results list\n");
 		exit(1);
 	}
+	r[limit_count] = NULL;
 	
 	int start = 0;
 	int index = 0;
@@ -81,7 +112,7 @@ char **split(char *s, char limit_char) {
 }
 
 t_data_frame **load_df(char *s, char limit_char) {
-	t_data_frame **r;
+	t_data_frame **r = NULL;
 	int i = 0, limit_count = 0;
 
 	while (s[i]) {
@@ -90,12 +121,12 @@ t_data_frame **load_df(char *s, char limit_char) {
 		i++;
 	}
 	limit_count++;
-	r = malloc(sizeof(t_data_frame*) * (limit_count + 1));
-	r[limit_count] = NULL;
+	r = calloc(limit_count + 1, sizeof(t_data_frame*));
 	if (!r) {
 		perror("Malloc error for results list\n");
-		exit(1);
+		return NULL;
 	}
+	r[limit_count] = NULL;
 	
 	int start = 0;
 	int index = 0;
@@ -103,12 +134,15 @@ t_data_frame **load_df(char *s, char limit_char) {
 	while (s[i]) {
 		if (s[i] == limit_char) {
 			s[i] = 0;
-			r[index] = malloc(sizeof(t_data_frame));
+			r[index] = calloc(1, sizeof(t_data_frame));
 			if (is_valid(&s[start])) {
 				r[index]->valid = 1;
 				if (is_number(&s[start])) {
 					r[index]->type = DOUBLE;
 					r[index]->d = atof(&s[start]);
+				} else if (is_date(&s[start])) {
+					r[index]->type = DATE;
+					r[index]->s = substring(s, start, i);
 				} else {
 					r[index]->type = STRING;
 					r[index]->s = substring(s, start, i);
@@ -121,17 +155,19 @@ t_data_frame **load_df(char *s, char limit_char) {
 	}
 
 	if (s[i -1] == '\n') s[i - 1] = 0;
-	r[index] = malloc(sizeof(t_data_frame));
+	r[index] = calloc(1, sizeof(t_data_frame));
 	if (is_valid(&s[start])) {
 		r[index]->valid = 1;
 		if (is_number(&s[start])) {
 			r[index]->type = DOUBLE;
 			r[index]->d = atof(&s[start]);
+		} else if (is_date(&s[start])) {
+			r[index]->type = DATE;
+			r[index]->s = substring(s, start, i);
 		} else {
 			r[index]->type = STRING;
 			r[index]->s = substring(s, start, i);
 		}
 	}
-	// printf("before return\n");
 	return r;
 }
