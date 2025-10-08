@@ -42,8 +42,8 @@ void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 
 	int index = 1;
 	while (df[index]) {
-		x_off = (int)(section_width / ext_i) + (int)(df[index][i]->d);
-		y_off = (int)(section_height / ext_j) + (int)(df[index][j]->d);
+		x_off = (int)(section_width / ext_i) * abs((int)(df[index][i]->d));
+		y_off = (int)(section_height / ext_j) * abs((int)(df[index][j]->d));
 
 		px = start_x + x_off;
 		py = start_y + y_off;
@@ -87,9 +87,10 @@ void pair_plot(t_data_frame ***df) {
 	}
 	int section_width = (int)(w_width / count);
 	int section_height = (int)(w_height / count);
+
 	// draw sections in the window
 	divide_window(renderer, section_width, section_height, w_width, w_height);
-	// we now have both w & h of the single visualization
+	// we now have both w & h for the single visualization
 
 	// cycle the data frame
 	i = 0;
@@ -101,7 +102,7 @@ void pair_plot(t_data_frame ***df) {
 			col = 0;
 			// crea un ciclo contro tutte le altre valide
 			j = 0;
-			while (df[0][j] && j < 2) {
+			while (df[0][j]) {
 				if (is_valid_column(df, j)) {
 					draw_pair_in_window(renderer, df, 
 						i, j,
