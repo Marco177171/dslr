@@ -39,10 +39,7 @@ t_data_frame*** get_data_frame(char *file)
 {
     FILE* csv_file = fopen(file, "r");
 	
-	if (!csv_file) {
-		perror("File not open. Quitting");
-		exit(1);
-	}
+	if (!csv_file) return NULL;
 
 	char buffer[2048];
 	int c = 0;

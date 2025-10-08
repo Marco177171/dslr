@@ -3,7 +3,7 @@
 #include <utils.h>
 
 const char *info = "\
-Usage: predict [OPTIONS]... [FILE.csv]...\n\
+Usage: predict [FILE.csv]... [OPTIONS]...\n\
 Generate descriptive statistics.\n\
 Descriptive statistics include those that summarize the central tendency, dispersion and shape of a dataset's distribution, excluding NaN values.\n\
 \n\
@@ -128,7 +128,14 @@ int main(int argc, char **argv) {
 	
 	if (argc < 2) {
 		printf("%s", info);
-		exit(1);
+		return(1);
+	}
+	
+	t_data_frame ***df = get_data_frame(argv[1]);
+
+	if (!df) {
+		fprintf(stderr, "error: invalid file: %s\n\n%s\n", argv[1], info);
+		return 1;
 	}
 
 	t_option options[3] = {{.type=PERCENTILE}, {.type=INCLUDE}, {.type=EXCLUDE}};
@@ -138,43 +145,41 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	t_data_frame ***df = get_data_frame(argv[1]);
-
-	if(df) {
-		t_feature *features = get_statistics(df, options);
-		if (features) {
-			t_feature *cpy = features;
-			while (cpy) {
-				if (options[INCLUDE].arg) {
-					printf("\n---------------\n");
-					printf("%s\n", cpy->name);
-					printf("count: %d\n", cpy->count);
-					if (include_option(options[INCLUDE].arg, "all")) {
-						print_string(cpy->stats, cpy->type);
-						print_numeric(cpy->stats, cpy->type);
-					}
-					else if (include_option(options[INCLUDE].arg, "numeric") && cpy->type == DOUBLE) print_numeric(cpy->stats, cpy->type);
-					else if (include_option(options[INCLUDE].arg, "string") && cpy->type == STRING) {
-						print_string(cpy->stats, cpy->type);
-					} else if (include_option(options[INCLUDE].arg, "datetime") && cpy->type == DATE) {
-						print_numeric(cpy->stats, cpy->type);
-					}
-				} else {
-					printf("\n---------------\n");
-					printf("%s\n", cpy->name);
-					printf("count: %d\n", cpy->count);
-					printf("mean: %f\n", cpy->stats.mean);
-					printf("std: %f\n", cpy->stats.std);
-					printf("min: %f\n", cpy->stats.min.d);
-					print_percentiles(cpy->stats.percentiles, cpy->type);
-					printf("max: %f\n", cpy->stats.max.d);
+	
+	t_feature *features = get_statistics(df, options);
+	if (features) {
+		t_feature *cpy = features;
+		while (cpy) {
+			if (options[INCLUDE].arg) {
+				printf("\n---------------\n");
+				printf("%s\n", cpy->name);
+				printf("count: %d\n", cpy->count);
+				if (include_option(options[INCLUDE].arg, "all")) {
+					print_string(cpy->stats, cpy->type);
+					print_numeric(cpy->stats, cpy->type);
 				}
-				cpy = cpy->next;
+				else if (include_option(options[INCLUDE].arg, "numeric") && cpy->type == DOUBLE) print_numeric(cpy->stats, cpy->type);
+				else if (include_option(options[INCLUDE].arg, "string") && cpy->type == STRING) {
+					print_string(cpy->stats, cpy->type);
+				} else if (include_option(options[INCLUDE].arg, "datetime") && cpy->type == DATE) {
+					print_numeric(cpy->stats, cpy->type);
+				}
+			} else {
+				printf("\n---------------\n");
+				printf("%s\n", cpy->name);
+				printf("count: %d\n", cpy->count);
+				printf("mean: %f\n", cpy->stats.mean);
+				printf("std: %f\n", cpy->stats.std);
+				printf("min: %f\n", cpy->stats.min.d);
+				print_percentiles(cpy->stats.percentiles, cpy->type);
+				printf("max: %f\n", cpy->stats.max.d);
 			}
+			cpy = cpy->next;
 		}
-		free_options(options);
 		free_statistics(features);
-		free_data_frame(df);
 	}
+
+	free_options(options);
+	free_data_frame(df);
 	return 0;
 }
