@@ -65,7 +65,7 @@ void draw_grid_from_origin(SDL_Renderer *renderer,
 void draw_origin(SDL_Renderer *renderer, 
 	int f1_origin, int f2_origin,
 	int w_width, int w_height) {
-	
+
 	SDL_SetRenderDrawColor(renderer, 127, 127, 127, 255);
 	SDL_RenderLine(renderer, f1_origin, 0, f1_origin, w_height); // x axis
 	SDL_RenderLine(renderer, 0, f2_origin, w_width, f2_origin); // y axis

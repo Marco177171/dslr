@@ -2,7 +2,9 @@
 #include <utils.h>
 #include <describe.h>
 
-void divide_window(SDL_Renderer *renderer, int section_width, int section_height, int w_width, int w_height) {
+void divide_window(SDL_Renderer *renderer, 
+	int section_width, int section_height, 
+	int w_width, int w_height) {
 	SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255); // set color
 	
 	// vertical lines
@@ -19,11 +21,74 @@ void divide_window(SDL_Renderer *renderer, int section_width, int section_height
 	}
 }
 
+void pair_plot_histogram(SDL_Renderer *renderer, t_data_frame ***df,
+	int i, int j,
+	int start_x, int start_y,
+	int section_width, int section_height) {
+
+	// find extension
+	(void) j;
+	(void) section_height;
+	
+	int max_i = (int)find_max(df, i);
+	int min_i = (int)find_min(df, i);
+	int ext_i = max_i - min_i;
+
+	// counters for students in each house
+	int g = 0, h = 0, r = 0, s = 0;
+	
+	int index = 0;
+	int score = 0;
+	while (score <= ext_i) {
+		
+		index = 0;
+		// conta studenti con score = 1 per ogni casa
+		g = 0, h = 0, r = 0, s = 0;
+		while (df[index]) {
+			if (!strcmp(df[index][1]->s, "Gryffindor") && i == (int)(df[index][i]->d))
+				g++;
+			else if (!strcmp(df[index][1]->s, "Hufflepuff") && i == (int)(df[index][i]->d))
+				h++;
+			else if (!strcmp(df[index][1]->s, "Ravenclaw") && i == (int)(df[index][i]->d))
+				r++;
+			else if (!strcmp(df[index][1]->s, "Slytherin") && i == (int)(df[index][i]->d))
+				s++;
+			index++;
+		}
+		
+		// disegna score corrente per ogni casa
+		SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255); // Gryffindor
+		SDL_RenderLine(renderer,
+			start_x + (int)(section_width / ext_i * score), start_y + section_height, 
+			start_x + (int)(section_width / ext_i * score), start_y + section_height - g);
+
+		SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255); // Hufflepuff
+		SDL_RenderLine(renderer,
+			start_x + (int)(section_width / ext_i * score) + 1, start_y + section_height, 
+			start_x + (int)(section_width / ext_i * score) + 1, start_y + section_height - h);
+
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Ravenclaw
+		SDL_RenderLine(renderer,
+			start_x + (int)(section_width / ext_i * score) + 2, start_y + section_height, 
+			start_x + (int)(section_width / ext_i * score) + 2, start_y + section_height - r);
+
+		SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255); // Slytherin
+		SDL_RenderLine(renderer,
+			start_x + (int)(section_width / ext_i * score) + 3, start_y + section_height, 
+			start_x + (int)(section_width / ext_i * score) + 3, start_y + section_height - s);
+
+		score++;
+	}
+
+}
+
 void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 	int i, int j,
 	int row, int col,
 	int section_width, int section_height) {
 
+	char value[32];
+	
 	int min_i = find_min(df, i);
 	int max_i = find_max(df, i);
 	int ext_i = max_i - min_i; // estensione massima della colonna i
@@ -32,9 +97,29 @@ void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 	int max_j = find_max(df, j);
 	int ext_j = max_j - min_j; // estensione massima della colonna j
 	
-	int start_x = col * section_width;
-	int start_y = row * section_height;
+	int start_x = (col * section_width) + section_width;
+	int start_y = (row * section_height) + section_height;
 
+	if (row == 0) {
+		SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255); // set color
+		sprintf(value, "%s", df[0][j]->s);
+		SDL_RenderDebugText(renderer, start_x + 10, 10, value);
+	}
+	if (col == 0) {
+		SDL_SetRenderDrawColor(renderer, 35, 35, 35, 255); // set color
+		sprintf(value, "%s", df[0][i]->s);
+		SDL_RenderDebugText(renderer, 10, start_y + 10, value);
+	}
+
+	if (col == row) {
+		pair_plot_histogram(renderer, df, 
+			i, j, 
+			start_x, start_y, 
+			section_width, section_height);
+		return;
+	}
+
+	start_y += section_height;
 	int px = 0;
 	int x_off = 0;
 	int py = 0;
@@ -42,21 +127,20 @@ void draw_pair_in_window(SDL_Renderer *renderer, t_data_frame ***df,
 
 	int index = 1;
 	while (df[index]) {
-		x_off = (int)(section_width / ext_i) * abs((int)(df[index][i]->d));
-		y_off = (int)(section_height / ext_j) * abs((int)(df[index][j]->d));
+		x_off = (int)(section_width / ext_i) * abs((int)(abs(min_i) + df[index][i]->d));
+		y_off = (int)(section_height / ext_j) * abs((int)(abs(min_j) + df[index][j]->d));
 
 		px = start_x + x_off;
-		py = start_y + y_off;
+		py = start_y - y_off;
 
-		if (!strcmp(df[i][1]->s, "Gryffindor"))
+		if (!strcmp(df[index][1]->s, "Gryffindor"))
 			SDL_SetRenderDrawColor(renderer, 242, 255, 94, 255);
-		else if (!strcmp(df[i][1]->s, "Hufflepuff"))
+		else if (!strcmp(df[index][1]->s, "Hufflepuff"))
 			SDL_SetRenderDrawColor(renderer, 255, 69, 66, 255);
-		else if (!strcmp(df[i][1]->s, "Ravenclaw"))
+		else if (!strcmp(df[index][1]->s, "Ravenclaw"))
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		else if (!strcmp(df[i][1]->s, "Slytherin"))
+		else if (!strcmp(df[index][1]->s, "Slytherin"))
 			SDL_SetRenderDrawColor(renderer, 88, 255, 66, 255);
-		
 		SDL_RenderPoint(renderer, px, py);
 		index++;
 	}
@@ -79,7 +163,7 @@ void pair_plot(t_data_frame ***df) {
 	SDL_GetWindowSizeInPixels(window, &w_width, &w_height); // store window size in variables
 
 	// count valid columns
-	int i = 0, count = 0;
+	int i = 1, count = 1;
 	while (df[0][i]) {
 		if (is_valid_column(df, i))
 			count++;
@@ -93,15 +177,15 @@ void pair_plot(t_data_frame ***df) {
 	// we now have both w & h for the single visualization
 
 	// cycle the data frame
-	i = 0;
-	int j = 0;
+	i = 1; // jump index column
+	int j = 1;
 	int row = 0, col = 0;
 	while (df[0][i]) {
 		// per ogni colonna valida...
 		if (is_valid_column(df, i)) {
 			col = 0;
 			// crea un ciclo contro tutte le altre valide
-			j = 0;
+			j = 1;
 			while (df[0][j]) {
 				if (is_valid_column(df, j)) {
 					draw_pair_in_window(renderer, df, 
