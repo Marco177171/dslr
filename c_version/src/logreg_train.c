@@ -3,6 +3,25 @@
 #include <logreg_train.h>
 #include <math.h>
 
+const char *info = "\
+Usage: logreg_train [FILE.csv]... [OPTIONS]...\n\
+Perform a Logistic regression.\n\n\
+Read the .csv file and perform a logistic regression on the dataset.\n\
+Produce a file weights.csv, containing the result of the training, plus the mean and the\n\
+standard deviation used to normalize the data.\n\n\
+options:\n\
+--gradient_descent=<gd> Select a valid gradient descent to train the model.\n\
+                        Default: 'batch'.\n\
+                        Possible value:\n\
+                            - 'stochastic': fastest possible gradient descent.\n\
+                                            Analyze only 1 single example.\n\
+                            - 'mini_batch': same as normal batch but on limited values (64).\n\
+                                            faster but less precise.\n\
+                            - 'adam'      : significantly more complex.\n\
+                                            Adam doesn't use a single fixed learning rate for all weights.\n\
+                                            Instead, it dynamically calculates a unique learning rate for *every* individual weight.\n\
+";
+
 void store_weights(FILE *fp, const char *house_name, double *weights, int n_features) {
     fprintf(fp, "%s", house_name);
 
@@ -38,7 +57,7 @@ void normalize_data(t_data_frame*** df, int n_features, t_train_data *data) {
     }
 }
 
-void logreg_train(t_data_frame*** df) {
+void logreg_train(t_data_frame*** df, char *gd) {
     int m = df_length(df);
     int n_features = (ENDING_COL - STARTING_COL) + 1;
     const char  *houses[] = {"Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"};
@@ -77,7 +96,12 @@ void logreg_train(t_data_frame*** df) {
         for (int i = 0; i <= n_features; i++) {
             weights[i] = 0.0;
         }
-        gradient_descent(weights, df, m, n_features, houses[k]);
+        if (!strcmp(gd, "batch")) gradient_descent(weights, df, m, n_features, houses[k]);
+        else if (!strcmp(gd, "mini_batch")) mini_batch_gradient_descent(weights, df, m, n_features, houses[k]);
+        else if (!strcmp(gd, "adam")) adam_gradient_descent(weights, df, m, n_features, houses[k]);
+        else {
+            fprintf(stderr, "error: invalid gradient descent: %s\n", gd);
+        }
         store_weights(fp, houses[k], weights, n_features);
     }
     if (fp) fclose(fp);
@@ -86,13 +110,37 @@ void logreg_train(t_data_frame*** df) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        perror("Wrong number of arguments. Usage: logreg_train <file.csv>");
+    if (argc < 2 || argc > 3) {
+        printf("%s", info);
         exit(EXIT_FAILURE);
     }
+
     t_data_frame*** df = get_data_frame(argv[1]);
 
-    logreg_train(df);
+    if (!df) {
+        fprintf(stderr, "error: invalid file: %s\n", argv[1]);
+        return(1);
+    }
+
+    char gradient_descent[64];
+    strcpy(gradient_descent, "batch\0");
+
+    if (argc == 3) {
+        if (!strncmp(argv[2], "--gradient_descent=", 19)) {
+            strcpy(gradient_descent, argv[2] + 19);
+            if (strcmp(gradient_descent, "batch") &&
+                strcmp(gradient_descent, "mini_batch") &&
+                strcmp(gradient_descent, "adam")) {
+                    fprintf(stderr, "error: invalid option: %s\nvalid options:\n\t- 'batch'\n\t- 'mini_batch'\n\t- 'adam'\n", argv[2]);        
+                    return 1;
+                }
+        } else {
+            fprintf(stderr, "error: invalid option: %s\n", argv[2]);
+            return 1;
+        }
+    }
+
+    logreg_train(df, gradient_descent);
 
     if (df) free_data_frame(df);
 }
