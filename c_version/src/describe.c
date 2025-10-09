@@ -3,7 +3,7 @@
 #include <utils.h>
 
 const char *info = "\
-Usage: predict [OPTIONS]... [FILE.csv]...\n\
+Usage: describe [FILE.csv]...[OPTIONS]...\n\
 Generate descriptive statistics.\n\
 Descriptive statistics include those that summarize the central tendency, dispersion and shape of a dataset's distribution, excluding NaN values.\n\
 \n\
